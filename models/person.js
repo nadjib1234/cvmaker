@@ -39,6 +39,21 @@ module.exports = function (sequelize, DataTypes) {
 
     },);
     person.associate = models => {
+        person.hasOne(models.user, {
+            as: 'userAccount', // An alias for this relation
+            foreignKey: 'personId',
+            onDelete: 'CASCADE' // If a person is deleted, the related user is also deleted
+        });
+        person.hasOne(models.student, {
+            as: 'userAccount2', // An alias for this relation
+            foreignKey: 'personId',
+            onDelete: 'CASCADE' // If a person is deleted, the related user is also deleted
+        });
+        person.hasOne(models.teacher, {
+            as: 'userAccount3', // An alias for this relation
+            foreignKey: 'personId',
+            onDelete: 'CASCADE' // If a person is deleted, the related user is also deleted
+        });
         // //create an ID_ROWID ref to the the last modification (updatedBy)
         // address.belongsTo(models.user, {
         //     foreignKey: {

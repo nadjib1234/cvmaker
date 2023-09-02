@@ -33,10 +33,24 @@ module.exports = function (sequelize, DataTypes) {
         role:{
             type: DataTypes.ENUM('Admin','Manager','Teacher','Student'),
             allowNull:false
+        },
+        personId: {
+            type: DataTypes.BIGINT,
+            allowNull: true,
+            references: {
+                model: 'people',  // This refers to the table name 'persons'
+                key: 'ID_ROWID'
+            }
         }
 
     },);
     user.associate = models => {
+        user.belongsTo(models.person, {
+            as: 'personProfile', // An alias for this relation
+            foreignKey: 'personId',
+            onDelete: 'CASCADE' // If a user is deleted, the related person profile remains (you can adjust this behavior as needed)
+        });
+       
         // //create an ID_ROWID ref to the the last modification (updatedBy)
         // address.belongsTo(models.user, {
         //     foreignKey: {

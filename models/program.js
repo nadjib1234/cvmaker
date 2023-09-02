@@ -33,6 +33,13 @@ module.exports = function (sequelize, DataTypes) {
 
     },);
     program.associate = models => {
+        
+        program.belongsToMany(models.student, {
+            through: models.registration,
+            foreignKey: 'ID_ROWID', // Using the correct primary key name for program
+            otherKey: 'StudentID',  // Assuming the primary key name for student is StudentID
+            as: 'students'
+        });
         // //create an ID_ROWID ref to the the last modification (updatedBy)
         // address.belongsTo(models.user, {
         //     foreignKey: {
