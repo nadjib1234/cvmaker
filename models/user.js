@@ -1,44 +1,42 @@
 const Sequelize = require('sequelize');
 module.exports = function (sequelize, DataTypes) {
-    const person = sequelize.define('person', {
+    const user = sequelize.define('user', {
         ID_ROWID: {
             autoIncrement: true,
             type: DataTypes.BIGINT,
             allowNull: false,
             primaryKey: true
         },
-        firstName: {
+        UserName: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: false
             
         },
-        lastName: {
+        Password: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: false
             
         },
-        mail: {
-            type: DataTypes.STRING,
+        isConnected: {
+            type: DataTypes.BOOLEAN,
             allowNull: false,
-            unique: true,
-            validate: {
-                isEmail: true
-            }
+            defaultValue: false // Assuming default value as 'false' if not provided
         },
-        phoneNumber: {
-            type: DataTypes.STRING,
-            allowNull: true, // Assuming phone number is optional
-            validate: {
-                len: [10, 15] // Adjust this range as needed
-            }
-        },
-        dateOfBirth: {
+        LastcnxDate: {
             type: DataTypes.DATEONLY,
             allowNull: true // Assuming this is optional
+        },
+        cnxToken:{
+            type:DataTypes.STRING,
+            allowNull:true
+        },
+        role:{
+            type: DataTypes.ENUM('Admin','Manager','Teacher','Student'),
+            allowNull:false
         }
 
     },);
-    person.associate = models => {
+    user.associate = models => {
         // //create an ID_ROWID ref to the the last modification (updatedBy)
         // address.belongsTo(models.user, {
         //     foreignKey: {
@@ -47,5 +45,5 @@ module.exports = function (sequelize, DataTypes) {
         //     }
         // });
     }
-    return person;
+   return user;
 };

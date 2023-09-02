@@ -1,44 +1,38 @@
 const Sequelize = require('sequelize');
 module.exports = function (sequelize, DataTypes) {
-    const person = sequelize.define('person', {
+    const program = sequelize.define('program', {
         ID_ROWID: {
             autoIncrement: true,
             type: DataTypes.BIGINT,
             allowNull: false,
             primaryKey: true
         },
-        firstName: {
+        title: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true
             
         },
-        lastName: {
-            type: DataTypes.STRING,
-            allowNull: false,
+        discription: {
+            type: DataTypes.TEXT,
+            allowNull: true
             
         },
-        mail: {
-            type: DataTypes.STRING,
+        isPublished: {
+            type: DataTypes.BOOLEAN,
             allowNull: false,
-            unique: true,
-            validate: {
-                isEmail: true
-            }
+            defaultValue: false // Assuming default value as 'false' if not provided
         },
-        phoneNumber: {
-            type: DataTypes.STRING,
-            allowNull: true, // Assuming phone number is optional
-            validate: {
-                len: [10, 15] // Adjust this range as needed
-            }
+        PublishedDate: {
+            type: DataTypes.DATEONLY,
+            allowNull: true // Assuming this is optional
         },
-        dateOfBirth: {
+        EndInsciptionDate: {
             type: DataTypes.DATEONLY,
             allowNull: true // Assuming this is optional
         }
 
     },);
-    person.associate = models => {
+    program.associate = models => {
         // //create an ID_ROWID ref to the the last modification (updatedBy)
         // address.belongsTo(models.user, {
         //     foreignKey: {
@@ -47,5 +41,5 @@ module.exports = function (sequelize, DataTypes) {
         //     }
         // });
     }
-    return person;
+   return program;
 };
