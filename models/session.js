@@ -8,20 +8,20 @@ module.exports = function (sequelize, DataTypes) {
             primaryKey: true
         },
         Startat: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.TIME,
             allowNull: true
-            
+
         },
         EndsAt: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.TIME,
             allowNull: true
-            
+
         },
-        date:{
+        date: {
             type: DataTypes.DATEONLY,
             allowNull: true // Assuming this is optional
         }
-    
+
     },);
     session.associate = models => {
         // //create an ID_ROWID ref to the the last modification (updatedBy)
@@ -32,5 +32,5 @@ module.exports = function (sequelize, DataTypes) {
         //     }
         // });
     }
-   return session;
+    return session;
 };

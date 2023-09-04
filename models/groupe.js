@@ -8,19 +8,22 @@ module.exports = function (sequelize, DataTypes) {
             primaryKey: true
         },
         GroupeName: {
-            type:DataTypes.STRING,
+            type: DataTypes.STRING,
             allowNull: true
         }
-    
+
     },);
     groupe.associate = models => {
-        // //create an ID_ROWID ref to the the last modification (updatedBy)
-        // address.belongsTo(models.user, {
-        //     foreignKey: {
-        //         name: 'updatedBy',
-        //         allowNull: true
-        //     }
-        // });
+        // a group can have many responsibale teachers
+        groupe.belongsToMany(models.teacher, {
+            through: models.teacherGroup,
+            foreignKey: 'GroupeID', // Using the correct primary key name for teacher
+        });
+        // a group can have many students
+        groupe.belongsToMany(models.student, {
+            through: models.studentGroup,
+            foreignKey: 'GroupeID', // Using the correct primary key name for teacher
+        });
     }
-   return groupe;
+    return groupe;
 };

@@ -10,12 +10,12 @@ module.exports = function (sequelize, DataTypes) {
         title: {
             type: DataTypes.STRING,
             allowNull: true
-            
+
         },
         discription: {
             type: DataTypes.TEXT,
             allowNull: true
-            
+
         },
         isPublished: {
             type: DataTypes.BOOLEAN,
@@ -33,20 +33,22 @@ module.exports = function (sequelize, DataTypes) {
 
     },);
     program.associate = models => {
-        
+        // program belong to one categorie
+        program.belongsTo(models.categorie, {
+            foreignKey: {
+                name: 'progID',
+                allowNull: true
+            }
+        });
+
+        // many student regist in our programes
         program.belongsToMany(models.student, {
             through: models.registration,
-            foreignKey: 'ID_ROWID', // Using the correct primary key name for program
+            foreignKey: 'progID', // Using the correct primary key name for program
             otherKey: 'StudentID',  // Assuming the primary key name for student is StudentID
             as: 'students'
         });
-        // //create an ID_ROWID ref to the the last modification (updatedBy)
-        // address.belongsTo(models.user, {
-        //     foreignKey: {
-        //         name: 'updatedBy',
-        //         allowNull: true
-        //     }
-        // });
+
     }
-   return program;
+    return program;
 };

@@ -10,7 +10,7 @@ module.exports = function (sequelize, DataTypes) {
         subject: {
             type: DataTypes.STRING,
             allowNull: false,
-            
+
         },
         personId: {
             type: DataTypes.BIGINT,
@@ -20,13 +20,18 @@ module.exports = function (sequelize, DataTypes) {
                 key: 'ID_ROWID'
             }
         }
-    
+
     },);
     teacher.associate = models => {
         teacher.belongsTo(models.person, {
             as: 'personProfile2', // An alias for this relation
             foreignKey: 'personId',
             onDelete: 'CASCADE' // If a user is deleted, the related person profile remains 
+        });
+        // A teacher can be responsibale of many Groups 
+        teacher.belongsToMany(models.groupe, {
+            through: models.teacherGroup,
+            foreignKey: 'TeacherID', // Using the correct primary key name for teacher
         });
         // //create an ID_ROWID ref to the the last modification (updatedBy)
         // address.belongsTo(models.user, {
@@ -36,5 +41,5 @@ module.exports = function (sequelize, DataTypes) {
         //     }
         // });
     }
-   return teacher;
+    return teacher;
 };

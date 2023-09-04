@@ -20,7 +20,7 @@ module.exports = function (sequelize, DataTypes) {
                 key: 'ID_ROWID'
             }
         }
-    
+
     },);
     student.associate = models => {
         student.belongsTo(models.person, {
@@ -28,19 +28,18 @@ module.exports = function (sequelize, DataTypes) {
             foreignKey: 'personId',
             onDelete: 'CASCADE' // If a user is deleted, the related person profile remains (you can adjust this behavior as needed)
         });
+        // many student regist in our programes
         student.belongsToMany(models.program, {
             through: models.registration,
             foreignKey: 'StudentID', // Using the correct primary key name for student
-            otherKey: 'ID_ROWID',    // Using the correct primary key name for program
+            otherKey: 'progID',    // Using the correct primary key name for program
             as: 'programs'
         });
-        // //create an ID_ROWID ref to the the last modification (updatedBy)
-        // address.belongsTo(models.user, {
-        //     foreignKey: {
-        //         name: 'updatedBy',
-        //         allowNull: true
-        //     }
-        // });
+        // A student can be in many Groups 
+        student.belongsToMany(models.groupe, {
+            through: models.studentGroup,
+            foreignKey: 'StudentID', // Using the correct primary key name for student
+        });
     }
-   return student;
+    return student;
 };
