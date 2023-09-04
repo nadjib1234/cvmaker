@@ -1,11 +1,16 @@
 const Sequelize = require('sequelize');
 module.exports = function (sequelize, DataTypes) {
     const student = sequelize.define('student', {
-        StudentID: {
+        ID_ROWID: {
             autoIncrement: true,
             type: DataTypes.BIGINT,
             allowNull: false,
             primaryKey: true
+        },
+        studentCode: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: "studentCode"
         },
         isActive: {
             type: DataTypes.BOOLEAN,

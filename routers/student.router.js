@@ -1,11 +1,9 @@
 const express = require("express");
-const routeWorker = express.Router();
+const routeStudent = express.Router();
 var bodyParser = require("body-parser");
 const { response } = require("express");
 var jsonParser = bodyParser.json();
-// const workerControler = require("../controllers/webControlers/workerControlers");
+const studentControler = require("../controllers/student");
 
-
-// routeWorker.post("/addWorker", jsonParser, workerControler.addWorker);
-// routeWorker.post("/removeWorker", jsonParser, workerControler.removeWorker);
-// module.exports = routeWorker;
+routeStudent.post("/addStudent", jsonParser, studentControler.addStudent);
+module.exports = routeStudent;
