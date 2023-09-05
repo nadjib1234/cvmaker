@@ -24,7 +24,7 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.BIGINT,
             references: {
                 model: 'students',
-                key: 'StudentID'
+                key: 'ID_ROWID'
             }
         }
     });

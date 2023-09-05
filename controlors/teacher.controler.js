@@ -19,7 +19,7 @@ const generateStudentCode = (firstName, lastName, dateOfBirth) => {
     return intCode;
 }
 
-const addStudent = async (req, res, next) => {
+const addTeacher = async (req, res, next) => {
     try {
         // get the data sent by the user request :
         // it has :
@@ -27,7 +27,7 @@ const addStudent = async (req, res, next) => {
         // to create student we need to generat a code from his name and his date of birth
         const reqData = req.body.data;
         const personID = await addPerson(reqData);
-      
+        const suject = reqData.subject;
         // generat student code : an unique id we use to reference to the student but for security reason we do not use it as a table primary key
         // student code is available for others to see 
         // primary key is not available 
@@ -36,12 +36,13 @@ const addStudent = async (req, res, next) => {
         /******* */
 
         // create the student 
-        await db.student.create({
-            studentCode:generatedCode,
-            personId: personID
+        await db.teacher.create({
+            TeacherID:generatedCode,
+            personId: personID,
+            subject:suject
         })
         return res.send({
-            message: "This user has been added successfully to Your list of student",
+            message: "This user has been added successfully to Your list of teachers",
             code: 200,
         });
     } catch (error) {
@@ -54,7 +55,7 @@ const addStudent = async (req, res, next) => {
     }
 }
 module.exports = {
-    addStudent,
+    addTeacher,
 };
 
 // const removeWorker = async (req, res, next) => {

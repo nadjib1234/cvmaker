@@ -10,7 +10,7 @@ module.exports = function (sequelize, DataTypes) {
         studentCode: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: "studentCode"
+            unique: true
         },
         isActive: {
             type: DataTypes.BOOLEAN,
