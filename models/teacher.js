@@ -1,11 +1,17 @@
 const Sequelize = require('sequelize');
 module.exports = function (sequelize, DataTypes) {
     const teacher = sequelize.define('teacher', {
-        TeacherID: {
+        ID_ROWID: {
             autoIncrement: true,
             type: DataTypes.BIGINT,
             allowNull: false,
             primaryKey: true
+        },
+        
+        TeacherID: {
+            type: DataTypes.BIGINT,
+            unique:true,
+            allowNull: false,
         },
         subject: {
             type: DataTypes.STRING,
