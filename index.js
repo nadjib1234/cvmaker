@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const studentRouter = require('./routers/student.router'); // Adjusted path to the routerapp.use(cors());
 const teacherRouter = require('./routers/teacher.router');
+const programRouter=require('./routers/program.router');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ strict: false, limit: "15mb" }));
 
@@ -20,6 +21,8 @@ app.get("/DADAMBackend/api", (req, res) => {
 
 app.use('/students', studentRouter);
 app.use('/teachers', teacherRouter);
+app.use('/programs', programRouter);
+
 
 
 db.sequelize.sync().then(() => {
