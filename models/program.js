@@ -36,7 +36,7 @@ module.exports = function (sequelize, DataTypes) {
         // program belong to one categorie
         program.belongsTo(models.categorie, {
             foreignKey: {
-                name: 'progID',
+                name: 'categID',
                 allowNull: true
             }
         });

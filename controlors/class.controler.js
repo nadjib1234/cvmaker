@@ -4,69 +4,100 @@ const op = seq.Op;
 require("dotenv").config();
 
 // Function to add a new class to the database
-async function addClass(data) {
-    const { className, capacité } = data;
+const addClass = async (req, res, next) => {
+    try {
+        const { className, capacité } = req.body.data;
 
-    // Check if the necessary data is provided
-    if (!className || !capacité) {
-        return {
-            message: "Error! There is missing data",
+        // Check if the necessary data is provided
+        if (!className || !capacité) {
+            return res.send({
+                message: "Error! There is missing data.",
+                code: 400
+            });
+        }
+
+        // Creating a new class record in the database
+        const newClass = await db.class.create({
+            className: className,
+            capacité: capacité
+        });
+
+        return res.send({
+            message: `Class '${className}' has been added successfully.`,
+            classId: newClass.ID_ROWID,
+            code: 200
+        });
+
+    } catch (error) {
+        return res.send({
+            message: "An error occurred while adding the class.",
+            error: error.message,
             code: 400
-        };
+        });
     }
+};
 
-    // Creating a new class record in the database
-    const newClass = await db.classe.create({
-        className: className,
-        capacité: capacité
-    });
+const updateClass = async (req, res, next) => {
+    try {
+        const classId = req.params.id;  // Assuming the class ID is passed as a parameter in the URL
+        const { className, capacité } = req.body.data;
 
-    // Return the ID of the newly created class for potential further use
-    return newClass.ID_ROWID;
-}
+        if (!classId) {
+            return res.send({
+                message: "Error! Class ID is required for updating.",
+                code: 400
+            });
+        }
 
-// Function to update a class in the database
-async function updateClass(classId, data) {
-    const { className, capacité } = data;
+        await db.class.update({
+            className: className,
+            capacité: capacité
+        }, {
+            where: { ID_ROWID: classId }
+        });
 
-    if (!classId) {
-        return {
-            message: "Error! Class ID is required for updating.",
+        return res.send({
+            message: "Class updated successfully!",
+            code: 200
+        });
+
+    } catch (error) {
+        return res.send({
+            message: "An error occurred while updating the class.",
+            error: error.message,
             code: 400
-        };
+        });
     }
+};
 
-    await db.classe.update({
-        className: className,
-        capacité: capacité
-    }, {
-        where: { ID_ROWID: classId }
-    });
+const deleteClass = async (req, res, next) => {
+    try {
+        const classId = req.params.id;  // Assuming the class ID is passed as a parameter in the URL
 
-    return {
-        message: "Class updated successfully!",
-        code: 200
-    };
-}
+        if (!classId) {
+            return res.send({
+                message: "Error! Class ID is required for deletion.",
+                code: 400
+            });
+        }
 
-// Function to delete a class from the database
-async function deleteClass(classId) {
-    if (!classId) {
-        return {
-            message: "Error! Class ID is required for deletion.",
+        await db.class.destroy({
+            where: { ID_ROWID: classId }
+        });
+
+        return res.send({
+            message: "Class deleted successfully!",
+            code: 200
+        });
+
+    } catch (error) {
+        return res.send({
+            message: "An error occurred while deleting the class.",
+            error: error.message,
             code: 400
-        };
+        });
     }
-
-    await db.classe.destroy({
-        where: { ID_ROWID: classId }
-    });
-
-    return {
-        message: "Class deleted successfully!",
-        code: 200
-    };
-}
+};
 
 module.exports = {
     addClass,

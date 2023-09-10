@@ -37,7 +37,7 @@ module.exports = function (sequelize, DataTypes) {
         // a categorie can have many programes
         categorie.hasMany(models.program, {
             foreignKey: {
-                name: 'progID',
+                name: 'categID',
                 allowNull: true
             }
         });
