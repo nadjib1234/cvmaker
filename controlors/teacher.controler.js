@@ -4,20 +4,7 @@ const op = seq.Op;
 const crypto = require('crypto');
 require("dotenv").config();
 const { addPerson } = require("./person.controler");
-const generateStudentCode = (firstName, lastName, dateOfBirth) => {
-    const currentDate = new Date().toISOString().split('T')[0];  // Gets the current date in 'YYYY-MM-DD' format
-    
-    // Combining the components
-    const dataString = `${firstName}${lastName}${dateOfBirth}${currentDate}`;
-    
-    // Hashing the combined string
-    const hash = crypto.createHash('sha256').update(dataString).digest('hex');
-    
-    // Taking the first 8 characters of the hash and converting it to an integer
-    const intCode = parseInt(hash.substring(0, 8), 16);  // Convert from hexadecimal to integer
-    
-    return intCode;
-}
+const { generateStudentCode } = require("./generator");
 
 const addTeacher = async (req, res, next) => {
     try {
@@ -37,9 +24,9 @@ const addTeacher = async (req, res, next) => {
 
         // create the student 
         await db.teacher.create({
-            TeacherID:generatedCode,
+            TeacherID: generatedCode,
             personId: personID,
-            subject:suject
+            subject: suject
         })
         return res.send({
             message: "This user has been added successfully to Your list of teachers",

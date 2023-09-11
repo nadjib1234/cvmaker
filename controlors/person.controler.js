@@ -11,6 +11,12 @@ async function addPerson(data) {
             code: 400
         });
     }
+    // Check if the user already exists
+    const existingUser = await db.person.findOne({ mail });
+
+    if (existingUser) {
+        return res.status(409).json({ message: 'Email already in use' });
+    }
     const person = await db.person.create({
         firstName: firstName,
         lastName: lastName,
