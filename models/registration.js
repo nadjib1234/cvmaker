@@ -13,20 +13,7 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.DATE,
             allowNull: false
         },
-        program_ID_ROWID: {
-            type: DataTypes.BIGINT,
-            references: {
-                model: 'programs',
-                key: 'ID_ROWID'
-            }
-        },
-        student_StudentID: {
-            type: DataTypes.BIGINT,
-            references: {
-                model: 'students',
-                key: 'ID_ROWID'
-            }
-        }
+    
     });
 
     return registration;

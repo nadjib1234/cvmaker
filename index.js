@@ -5,7 +5,15 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const studentRouter = require('./routers/student.router'); // Adjusted path to the routerapp.use(cors());
 const teacherRouter = require('./routers/teacher.router');
-const programRouter=require('./routers/program.router');
+const programRouter = require('./routers/programe.router');
+const regisrationRouter = require('./routers/registration.router');
+const classRouter= require('./routers/class.router');
+const categorieRouter= require('./routers/categorie.router');
+const groupeRouter=require('./routers/groupe.router');
+
+const GSRouter=require('./routers/studentgroupe.router');
+
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ strict: false, limit: "15mb" }));
 
@@ -19,9 +27,15 @@ app.get("/DADAMBackend/api", (req, res) => {
     res.send({ message: "Hello from server!" });
 });
 
+
 app.use('/students', studentRouter);
 app.use('/teachers', teacherRouter);
-app.use('/programs', programRouter);
+app.use('/program', programRouter);
+app.use('/registration', regisrationRouter);
+app.use('/class', classRouter);
+app.use('/categorie', categorieRouter);
+app.use('/groupe', groupeRouter);
+app.use('/gs',GSRouter);
 
 
 
