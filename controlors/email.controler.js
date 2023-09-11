@@ -13,7 +13,7 @@ const sendEmail = async (email, subject, payload) => {
             port: 587,
             secure: false,
             auth: {
-                user: 'ProMaster@gmail.com',
+                user: 'workstyle2103@gmail.com',
                 pass: 'qiukqijwxypfqiua'
             },
             tls: {
@@ -32,7 +32,7 @@ const sendEmail = async (email, subject, payload) => {
         let MailGenerator = new Mailgen({
             theme: "default",
             product: {
-                name: "PlanIt",
+                name: "DADAM School",
                 link: 'https://mailgen.js/'
             }
         });

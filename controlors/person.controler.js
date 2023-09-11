@@ -4,29 +4,43 @@ const op = seq.Op;
 require("dotenv").config();
 // because we will use it many time i made it as a separated function
 async function addPerson(data) {
-    const { firstName, lastName, mail, phoneNumber, dateOfBirth } = data;
-    if (!firstName || !lastName || !mail || !phoneNumber || !dateOfBirth) {
-        return res.send({
-            message: "Error! There is a messing data",
-            code: 400
-        });
-    }
-    // Check if the user already exists
-    const existingUser = await db.person.findOne({ mail });
+    try {
+        const { firstName, lastName, mail, phoneNumber, dateOfBirth } = data;
+        if (!firstName || !lastName || !mail || !phoneNumber || !dateOfBirth) {
+            return {
+                message: "Error! There is missing data",
+                code: 400
+            };
+        }
 
-    if (existingUser) {
-        return res.status(409).json({ message: 'Email already in use' });
+        const existingUser = await db.person.findOne({ where: { mail: mail } });
+
+        if (existingUser) {
+            return {
+                message: 'Email already in use',
+                code: 409
+            };
+        }
+
+        const person = await db.person.create({
+            firstName,
+            lastName,
+            mail,
+            phoneNumber,
+            dateOfBirth
+        });
+
+        return person.ID_ROWID;
+    } catch (error) {
+        console.error(error);
+        return {
+            message: "An error occurred",
+            error: error.message,
+            code: 400
+        };
     }
-    const person = await db.person.create({
-        firstName: firstName,
-        lastName: lastName,
-        mail: mail,
-        phoneNumber: phoneNumber,
-        dateOfBirth: dateOfBirth
-    });
-    // return the created user ID to use it later
-    return person.ID_ROWID;
 }
+
 module.exports = {
     addPerson,
 };

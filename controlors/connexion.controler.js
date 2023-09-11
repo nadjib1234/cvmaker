@@ -1,4 +1,4 @@
-const db = require("../../models");
+const db = require("../models");
 const seq = require("sequelize");
 const { where } = require("sequelize");
 const op = seq.Op;
@@ -6,7 +6,7 @@ const fs = require("fs");
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
-
+const bcrypt = require('bcrypt');
 // Generate a new API token
 function generateToken(userName, id) {
     const payload = {
@@ -46,7 +46,7 @@ const login = async (req, res, next) => {
                     }
                 },
                 include: [{
-                    model: person,
+                    model: db.person,
                     as: 'personProfile'
                 }]
             });
@@ -59,7 +59,7 @@ const login = async (req, res, next) => {
                 });
             }
             // find if the password is correct 
-            const passwordMatch = await bcrypt.compare(password, user.Password);
+            const passwordMatch = await bcrypt.compare(psw, user.Password);
 
             if (!passwordMatch) {
                 return done(null, false, { message: 'Incorrect password.' });
@@ -88,7 +88,7 @@ const login = async (req, res, next) => {
     }
 };
 // logout 
-const logout = async (req, res, next) => {
+const logOut = async (req, res, next) => {
     const { userID } =
         req.body; /* userLog is the field that can passe an email or a username
                                         psw id the field that passe the password of the account */

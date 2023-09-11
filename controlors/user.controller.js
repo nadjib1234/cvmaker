@@ -25,7 +25,14 @@ const addUser = async (req, res, next) => {
         // to create person :(firstName, lastName, mail, phoneNumber, dateOfBirth)
         // to create student we need to generat a code from his name and his date of birth
         const reqData = req.body.data;
-        const personID = await addPerson(reqData);
+        const result = await addPerson(reqData);
+        if (result.code === 400 || result.code === 409) {
+            return res.send({
+                message: "An error occurred",
+                error: result.message,
+                code: result.code,
+            });
+        }
         // create a user name :
         const username = generateUniqueUsername(reqData.firstName, reqData.lastName);
         /******* */
@@ -38,7 +45,7 @@ const addUser = async (req, res, next) => {
             UserName: username,
             role: reqData.role,
             Password: hashedPassword,
-            personId: personID
+            personId: result
         });
         await sendPassword(reqData.firstName, reqData.lastName, password, reqData.mail);
         return res.send({
@@ -46,12 +53,12 @@ const addUser = async (req, res, next) => {
             code: 200,
         });
     } catch (error) {
-        res.send({
+        return res.send({
             message: "An error occurred",
             error: error.message,
             code: 400,
         });
-        throw error;
+
     }
 }
 module.exports = {

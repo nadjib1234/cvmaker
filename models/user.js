@@ -8,14 +8,13 @@ module.exports = function (sequelize, DataTypes) {
             primaryKey: true
         },
         UserName: {
-            type: DataTypes.STRING,
-            allowNull: false
-            
+            type: DataTypes.STRING(150),
+            allowNull: false,
         },
         Password: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(150),
             allowNull: false
-            
+
         },
         isConnected: {
             type: DataTypes.BOOLEAN,
@@ -26,13 +25,13 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.DATEONLY,
             allowNull: true // Assuming this is optional
         },
-        cnxToken:{
-            type:DataTypes.STRING,
-            allowNull:true
+        cnxToken: {
+            type: DataTypes.STRING,
+            allowNull: true
         },
-        role:{
-            type: DataTypes.ENUM('Admin','Manager','Teacher','Student'),
-            allowNull:false
+        role: {
+            type: DataTypes.ENUM('Admin', 'Manager', 'Teacher', 'Student'),
+            allowNull: false
         },
         personId: {
             type: DataTypes.BIGINT,
@@ -50,7 +49,7 @@ module.exports = function (sequelize, DataTypes) {
             foreignKey: 'personId',
             onDelete: 'CASCADE' // If a user is deleted, the related person profile remains (you can adjust this behavior as needed)
         });
-       
+
         // //create an ID_ROWID ref to the the last modification (updatedBy)
         // address.belongsTo(models.user, {
         //     foreignKey: {
@@ -59,5 +58,5 @@ module.exports = function (sequelize, DataTypes) {
         //     }
         // });
     }
-   return user;
+    return user;
 };

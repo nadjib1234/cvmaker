@@ -7,11 +7,13 @@ const studentRouter = require('./routers/student.router'); // Adjusted path to t
 const teacherRouter = require('./routers/teacher.router');
 const programRouter = require('./routers/programe.router');
 const regisrationRouter = require('./routers/registration.router');
-const classRouter= require('./routers/class.router');
-const categorieRouter= require('./routers/categorie.router');
-const groupeRouter=require('./routers/groupe.router');
+const classRouter = require('./routers/class.router');
+const categorieRouter = require('./routers/categorie.router');
+const groupeRouter = require('./routers/groupe.router');
+const GSRouter = require('./routers/studentgroupe.router');
 
-const GSRouter=require('./routers/studentgroupe.router');
+const connexionRouter = require('./routers/connexion.router');
+const userRouter = require('./routers/user.router');
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -35,9 +37,9 @@ app.use('/registration', regisrationRouter);
 app.use('/class', classRouter);
 app.use('/categorie', categorieRouter);
 app.use('/groupe', groupeRouter);
-app.use('/gs',GSRouter);
-
-
+app.use('/gs', GSRouter);
+app.use('/connexion', connexionRouter);
+app.use('/user', userRouter);
 
 db.sequelize.sync().then(() => {
     const PORT = process.env.PORT || 8323;
