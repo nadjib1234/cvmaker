@@ -121,11 +121,73 @@ const updateCategorie = async (req, res, next) => {
         });
     }
 };
+const listCategories = async (req, res, next) => {
+    try {
+        const categories = await db.categorie.findAll({
+            attributes: ['title', 'discription', 'isPublished', 'isSubCategory', 'supperCatID']
+        });
+
+        return res.send({
+            message: "List of all categories.",
+            categories: categories,
+            code: 200
+        });
+    } catch (error) {
+        return res.send({
+            message: "An error occurred while fetching categories.",
+            error: error.message,
+            code: 400
+        });
+    }
+};
+
+const Fuse = require('fuse.js');
+
+const exploreSearchCategories = async (req, res, next) => {
+    try {
+        const findKey = req.body.Key;
+        
+        if (!findKey) {
+            return res.send({
+                message: "Search key is missing.",
+                categories: null,
+                code: 200
+            });
+        }
+
+        const itemsForSearching = await db.categorie.findAll({
+            attributes: ['title', 'discription', 'isPublished', 'isSubCategory', 'supperCatID']
+        });
+
+        const options = {
+            includeScore: true,
+            keys: ['title', 'discription']
+        };
+
+        const fuse = new Fuse(itemsForSearching, options);
+        const result = fuse.search(findKey);
+        const filteredItems = result.map(item => item.item);
+            return res.send({
+                message: "Search results for categories.",
+                categories: filteredItems,
+                code: 200
+            });
+       
+    } catch (error) {
+        return res.send({
+            message: "An error occurred during the search.",
+            error: error.message,
+            code: 400
+        });
+    }
+};
 
 // Exporting the functions so they can be used elsewhere
 
 module.exports = {
     addCategorie,
     updateCategorie,
-    removeCategorie
+    removeCategorie,
+    listCategories,
+    exploreSearchCategories
 };

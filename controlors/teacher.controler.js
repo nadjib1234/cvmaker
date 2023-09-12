@@ -1,6 +1,7 @@
 const db = require(".././models");
 const seq = require("sequelize");
 const op = seq.Op;
+const Fuse = require('fuse.js'); // for search by multiple attributes "library already installed by wisso"
 const crypto = require('crypto');
 require("dotenv").config();
 const { addPerson } = require("./person.controler");
@@ -54,9 +55,171 @@ const addTeacher = async (req, res, next) => {
         throw error;
     }
 }
+const updateTeacher = async (req, res, next) => {
+    try {
+        const data = req.body.data;
+        const teacherId = req.params.id;
+
+        if (!teacherId) {
+            return res.send({
+                message: "Error! TeacherID is required for updating.",
+                code: 400
+            });
+        }
+
+        const teacherRecord = await db.teacher.findOne({ where: { ID_ROWID: teacherId } });
+
+        await db.person.update({
+            firstName: data.firstName,
+            lastName: data.lastName,
+            mail: data.mail,
+            phoneNumber: data.phoneNumber,
+            dateOfBirth: data.dateOfBirth
+        }, {
+            where: { ID_ROWID: teacherRecord.personId }
+        });
+          // Now update teacher-specific details
+          await db.teacher.update({
+            subject: data.subject
+        }, {
+            where: { ID_ROWID: teacherId }
+        });
+
+        return res.send({
+            message: `Teacher '${data.firstName} ${data.lastName}' has been updated successfully.`,
+            code: 200
+        });
+
+    } catch (error) {
+        return res.send({
+            message: "An error occurred while updating the teacher.",
+            error: error.message,
+            code: 400
+        });
+    }
+};
+
+const removeTeacher = async (req, res, next) => {
+    try {
+        const teacherID = req.params.id;
+
+        if (!teacherID) {
+            return res.send({
+                message: "Error! Teacher ID must be provided.",
+                code: 400
+            });
+        }
+
+        const teacher = await db.teacher.findByPk(teacherID);
+        if (!teacher) {
+            return res.send({
+                message: "Error! Teacher not found.",
+                code: 404
+            });
+        }
+
+        await db.person.destroy({
+            where: { ID_ROWID: teacher.personId }
+        });
+
+        await db.teacher.destroy({
+            where: { ID_ROWID: teacherID }
+        });
+
+        return res.send({
+            message: "Teacher removed successfully.",
+            code: 200
+        });
+
+    } catch (error) {
+        return res.send({
+            message: "An error occurred while removing the teacher.",
+            error: error.message,
+            code: 400
+        });
+    }
+};
+const listTeachers = async (req, res, next) => {
+    try {
+        // Fetching all teachers from the database
+        const teachers = await db.teacher.findAll({
+            attributes: ['TeacherID', 'subject'],  // Added 'subject' here
+            include: [
+                {
+                    model: db.person,
+                    as: 'personProfile2',  // Alias you set in associations
+                    attributes: ['firstName', 'lastName', 'mail', 'phoneNumber', 'dateOfBirth'] 
+                }
+            ]
+        });
+
+        // Return the list of teachers
+        return res.send({
+            message: "List of all teachers",
+            teachers: teachers,
+            code: 200
+        });
+
+    } catch (error) {
+        return res.send({
+            message: "An error occurred while fetching the list of teachers.",
+            error: error.message,
+            code: 400
+        });
+    }
+};
+const ExploreSearch = async (req, res, next) => {
+    try {
+        const findKey = req.body.Key;
+        
+        if (!findKey) {
+            return res.send({
+                message: "we can't get any information about search",
+                teachers: null,
+                code: 200
+            });
+        }
+
+        const itemsForSearching = await db.teacher.findAll({
+            attributes: ['TeacherID', 'subject'],
+            include: {
+                model: db.person,
+                as:"personProfile2",
+                attributes: ['firstName', 'lastName', 'mail', 'phoneNumber', 'dateOfBirth']   
+            }
+        });
+
+        const options = {
+            includeScore: true,
+            keys: ['personProfile2.firstName', 'personProfile2.lastName', 'personProfile2.mail', 'personProfile2.phoneNumber', 'subject']
+        };
+
+        const fuse = new Fuse(itemsForSearching, options);
+        const result = fuse.search(findKey);
+        const filteredItems = result.map(item => item.item.toJSON());
+            return res.send({
+                message: "Search results",
+                teachers: filteredItems,
+                code: 200
+            });
+    
+    } catch (error) {
+        return res.send({
+            message: "An error occurred during search",
+            error: error.message,
+            code: 500
+        });
+    }
+};
+
 module.exports = {
     addTeacher,
+    updateTeacher,
+    removeTeacher,
+    listTeachers,
+    ExploreSearch
 };
+
 
 // const removeWorker = async (req, res, next) => {
 //     try {

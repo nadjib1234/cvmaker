@@ -2,6 +2,7 @@ const db = require(".././models");
 const seq = require("sequelize");
 const op = seq.Op;
 const crypto = require('crypto');
+const Fuse = require('fuse.js');
 require("dotenv").config();
 const { addPerson } = require("./person.controler");
 const generateStudentCode = (firstName, lastName, dateOfBirth) => {
@@ -53,42 +54,172 @@ const addStudent = async (req, res, next) => {
         throw error;
     }
 }
+const updateStudent = async (req, res, next) => {
+    try {
+        const data = req.body.data;  // Extracting the data object directly
+         const sudentid= req.params.id;
+        // Check if studentID is provided
+        if (!sudentid) {
+            return res.send({
+                message: "Error! StudentID is required for updating.",
+                code: 400
+            });
+        }
+        // Get the personId for the student
+const studentRecord = await db.student.findOne({ where: { ID_ROWID: sudentid } });
+
+    // Now update the person using the personId from the student record
+    await db.person.update({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        mail: data.mail,
+        phoneNumber: data.phoneNumber,
+        dateOfBirth: data.dateOfBirth
+    }, {
+        where: { ID_ROWID: studentRecord.personId }
+    });
+
+        return res.send({
+            message: `Student '${data.firstName} ${data.lastName}' has been updated successfully.`,
+            code: 200
+        });
+
+    } catch (error) {
+        return res.send({
+            message: "An error occurred while updating the student.",
+            error: error.message,
+            code: 400
+        });
+    }
+};
+const removeStudent = async (req, res, next) => {
+    try {
+        const studentID = req.params.id;
+
+        // Validation: Ensure a studentID was provided
+        if (!studentID) {
+            return res.send({
+                message: "Error! Student ID must be provided.",
+                code: 400
+            });
+        }
+
+        // Fetch the student
+        const student = await db.student.findByPk(studentID);
+        if (!student) {
+            return res.send({
+                message: "Error! Student not found.",
+                code: 404
+            });
+        }
+
+        // Remove the associated person from the database
+        await db.person.destroy({
+            where: { ID_ROWID: student.personId }
+        });
+
+        // Remove the student from the database
+        await db.student.destroy({
+            where: { ID_ROWID: studentID }
+        });
+//in order words i delete both student and person 
+        // Return success message
+        return res.send({
+            message: "Student removed successfully.",
+            code: 200
+        });
+
+    } catch (error) {
+        return res.send({
+            message: "An error occurred while removing the student.",
+            error: error.message,
+            code: 400
+        });
+    }
+};
+const listStudents = async (req, res, next) => {
+    try {
+        // Fetching all students from the database
+        const students = await db.student.findAll({
+            attributes: ['studentCode'], 
+
+            include: [ // Assuming you want to also fetch the associated person details for each student
+                {
+                    model: db.person,
+                    as: 'personProfile2',  // Alias you set in associations
+                    attributes: ['firstName', 'lastName', 'mail', 'phoneNumber', 'dateOfBirth'] // specify the attributes you want
+                 
+                }
+            ]
+        });
+
+        // Return the list of students
+        return res.send({
+            message: "List of all students",
+            students: students,
+            code: 200
+        });
+
+    } catch (error) {
+        return res.send({
+            message: "An error occurred while fetching the list of students.",
+            error: error.message,
+            code: 400
+        });
+    }
+};
+const ExploreSearch = async (req, res, next) => {
+    try {
+        const findKey = req.body.Key;
+
+        if (!findKey) {
+            return res.send({
+                message: "No search key provided.",
+                students: null,
+                code: 200
+            });
+        }
+
+        // Fetch all students with their associated person details
+        const itemsForSearching = await db.student.findAll({
+            attributes: ['studentCode'], 
+            include: [{
+                model: db.person,
+                as: 'personProfile2',
+                attributes: ['firstName', 'lastName', 'mail', 'phoneNumber', 'dateOfBirth']   
+                     }]
+        });
+
+        // Setup the options for Fuse
+        const options = {
+            includeScore: true,
+            keys: ['personProfile2.firstName', 'personProfile2.lastName', 'personProfile2.mail', 'personProfile2.phoneNumber']
+        };
+
+        const fuse = new Fuse(itemsForSearching, options);
+        const result = fuse.search(findKey);
+        
+        // Extract the items from the Fuse result
+        const filteredItems = result.map(item => item.item.toJSON());
+            return res.send({
+                message: "Search results",
+                students: filteredItems,
+                code: 200
+            });
+        // Return the filtered items
+        
+    } catch (error) {
+        return res.send({
+            message: "An error occurred during the search.",
+            error: error.message,
+            code: 400
+        });
+    }
+};
 module.exports = {
     addStudent,
+    updateStudent,
+    removeStudent,
+    listStudents,
+    ExploreSearch
 };
-
-// const removeWorker = async (req, res, next) => {
-//     try {
-//         const { userID } = req.body;
-//         // workerID the one we find by his email
-
-//         if (!userID) {
-//             return res.send({
-//                 message: "error no data has been sent",
-//                 code: 500,
-//             });
-//         }
-//         await db.Workers.destroy({
-//             where: {
-//                 MWUID: userID,
-//             },
-//         });
-//         const user = await db.Users.findByPk(userID);
-//         user.is_staff = false;
-//         user.save();
-
-//         return res.send({
-//             message:
-//                 "This user has been Remove successfully from Your list of workers",
-//             code: 200,
-//         });
-//     } catch (error) {
-//         res.send({
-//             message: "An error occurred",
-//             error: error.message,
-//             code: 400,
-//         });
-//         throw error;
-//     }
-// };
-// // remove worker
