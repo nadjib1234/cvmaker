@@ -6,4 +6,8 @@ var jsonParser = bodyParser.json();
 const studentControler = require("../controlors/student.controler");
 
 routeStudent.post("/addStudent", jsonParser, studentControler.addStudent);
+routeStudent.put("/modify/:id", jsonParser, studentControler.updateStudent);
+routeStudent.delete("/remove/:id", jsonParser, studentControler.removeStudent);
+routeStudent.get("/list", jsonParser, studentControler.listStudents);
+routeStudent.get("/find", jsonParser, studentControler.ExploreSearch);
 module.exports = routeStudent;

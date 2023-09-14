@@ -14,6 +14,7 @@ const GSRouter = require('./routers/studentgroupe.router');
 
 const connexionRouter = require('./routers/connexion.router');
 const userRouter = require('./routers/user.router');
+const schoolRouter = require('./routers/school.router');
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -25,22 +26,22 @@ app.use(function (req, res, next) {
     req.headers["content-type"] = "application/json";
     next();
 });
-app.get("/DADAMBackend/api", (req, res) => {
+app.get("/DADAM_Backend", (req, res) => {
     res.send({ message: "Hello from server!" });
 });
 
 
-app.use('/students', studentRouter);
-app.use('/teachers', teacherRouter);
-app.use('/program', programRouter);
-app.use('/registration', regisrationRouter);
-app.use('/class', classRouter);
-app.use('/categorie', categorieRouter);
-app.use('/groupe', groupeRouter);
-app.use('/gs', GSRouter);
-app.use('/connexion', connexionRouter);
-app.use('/user', userRouter);
-
+app.use('/DADAM_Backend/students', studentRouter);
+app.use('/DADAM_Backend/teachers', teacherRouter);
+app.use('/DADAM_Backend/program', programRouter);
+app.use('/DADAM_Backend/registration', regisrationRouter);
+app.use('/DADAM_Backend/class', classRouter);
+app.use('/DADAM_Backend/categorie', categorieRouter);
+app.use('/DADAM_Backend/groupe', groupeRouter);
+app.use('/DADAM_Backend/gs', GSRouter);
+app.use('/DADAM_Backend/connexion', connexionRouter);
+app.use('/DADAM_Backend/user', userRouter);
+app.use('/DADAM_Backend/school', schoolRouter);
 db.sequelize.sync().then(() => {
     const PORT = process.env.PORT || 8323;
     app.listen(PORT, () => {

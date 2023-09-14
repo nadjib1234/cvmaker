@@ -29,7 +29,7 @@ const login = async (req, res, next) => {
     // Check if userLog and password is provided
     if (!userLog || !psw) {
         return res.send({
-            message: "userLog or Password not present",
+            message: "user mail or Password not present",
             error: "userLog or Password not present",
             code: 401,
         });
@@ -53,7 +53,7 @@ const login = async (req, res, next) => {
             if (!user) {
                 // The most commonly used status code for login failed is 401 Unauthorized
                 return res.send({
-                    message: "Invalid username or password",
+                    message: "Nous n'avons trouvé aucun utilisateur associé à cette adresse e-mail.",
                     error: "User password or log in is not correct",
                     code: 401,
                 });
@@ -62,7 +62,11 @@ const login = async (req, res, next) => {
             const passwordMatch = await bcrypt.compare(psw, user.Password);
 
             if (!passwordMatch) {
-                return done(null, false, { message: 'Incorrect password.' });
+                return res.send({
+                    message: "Le mot de passe que vous avez saisi est incorrect.",
+                    error: "password incorrect",
+                    code: 401,
+                });
             }
             else {
                 const token = generateToken(user.ID_ROWID, user.username);
