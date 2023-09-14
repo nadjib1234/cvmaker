@@ -66,6 +66,7 @@ const addUser = async (req, res, next) => {
 const getAllUsers = async (req, res, next) => {
     try {
         const allUsers = await db.user.findAll({
+            attributes: ['ID_ROWID', 'isConnected', 'role'],
             include: [{
                 model: db.person,
                 as: 'personProfile'
@@ -133,7 +134,7 @@ const removeUser = async (req, res, next) => {
 };
 const ExploreSearchUsers = async (req, res, next) => {
     try {
-        const findKey = req.body.Key;
+        const findKey = req.params.Key;
 
         if (!findKey) {
             return res.send({
