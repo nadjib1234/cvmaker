@@ -26,6 +26,7 @@ const addUser = async (req, res, next) => {
         // to create person :(firstName, lastName, mail, phoneNumber, dateOfBirth)
         // to create user we need to generat a code from his name and his date of birth
         const reqData = req.body.data;
+        console.log(reqData);
         const result = await addPerson(reqData);
         if (result.code === 400 || result.code === 409) {
             return res.send({

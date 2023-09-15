@@ -24,6 +24,11 @@ module.exports = function (sequelize, DataTypes) {
                 isEmail: true
             }
         },
+        imagePath: {
+            type: DataTypes.STRING,
+            allowNull: false,
+
+        },
         phoneNumber: {
             type: DataTypes.STRING,
             allowNull: true, // Assuming phone number is optional
