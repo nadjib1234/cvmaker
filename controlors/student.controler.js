@@ -70,7 +70,12 @@ const updateStudent = async (req, res, next) => {
         }, {
             where: { ID_ROWID: studentRecord.personId }
         });
-
+        await db.student.update({
+            isActive:data.status
+        },{
+            where: { ID_ROWID:sudentid}
+        
+        })
         return res.send({
             message: `Student '${data.firstName} ${data.lastName}' has been updated successfully.`,
             code: 200
@@ -133,8 +138,6 @@ const listStudents = async (req, res, next) => {
     try {
         // Fetching all students from the database
         const students = await db.student.findAll({
-            attributes: ['studentCode'],
-
             include: [ // Assuming you want to also fetch the associated person details for each student
                 {
                     model: db.person,
