@@ -1,4 +1,5 @@
 const db = require(".././models");
+const crypto = require('crypto');
 const seq = require("sequelize");
 const op = seq.Op;
 require("dotenv").config();
