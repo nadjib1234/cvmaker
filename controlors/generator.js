@@ -4,11 +4,16 @@ const seq = require("sequelize");
 const op = seq.Op;
 require("dotenv").config();
 // because we will use it many time i made it as a separated function
-const generateStudentCode = (firstName, lastName, dateOfBirth) => {
+const checkIfCodeExists = async (code) => {
+    const student = await db.student.findOne({ where: { studentCode: code } });
+    return !!student;
+}
+
+const generateStudentCode = (firstName, lastName, dateOfBirth,email) => {
     const currentDate = new Date().toISOString().split('T')[0];  // Gets the current date in 'YYYY-MM-DD' format
 
     // Combining the components
-    const dataString = `${firstName}${lastName}${dateOfBirth}${currentDate}`;
+    const dataString = `${email}${firstName}${currentDate}${lastName}${dateOfBirth}`;
 
     // Hashing the combined string
     const hash = crypto.createHash('sha256').update(dataString).digest('hex');
@@ -37,4 +42,5 @@ function generateUniqueUsername(firstName, lastName) {
 module.exports = {
     generateStudentCode,
     generateUniqueUsername,
+    checkIfCodeExists
 };

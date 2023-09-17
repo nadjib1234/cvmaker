@@ -27,7 +27,14 @@ const addTeacher = async (req, res, next) => {
         // generat student code : an unique id we use to reference to the student but for security reason we do not use it as a table primary key
         // student code is available for others to see 
         // primary key is not available 
-        const generatedCode = generateStudentCode(reqData.firstName, reqData.lastName, reqData.dateOfBirth);
+        let generatedCode = generateStudentCode(reqData.firstName, reqData.lastName, reqData.dateOfBirth, reqData.email);
+        
+        // Check if the generated code exists, if yes, then keep generating a new one until it's unique
+        while (await checkIfCodeExists(generatedCode)) {
+            // Alter the generated code in some way to ensure uniqueness. This could be adding a random number, or using another mechanism.
+            // For this example, I'm simply appending a random number to it. 
+            // You might want to modify the generateStudentCode function or come up with a different mechanism for this.
+            generatedCode = generateStudentCode(reqData.firstName, reqData.lastName, reqData.dateOfBirth, reqData.email) + Math.floor(Math.random() * 1000);}
         // find a way to create it using user first & last name , date of birth , the actual date 
         /******* */
 
