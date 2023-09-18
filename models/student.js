@@ -15,7 +15,7 @@ module.exports = function (sequelize, DataTypes) {
         isActive: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
-            defaultValue: false // Assuming default value as 'false' if not provided
+            defaultValue: true // Assuming default value as 'false' if not provided
         },
         personId: {
             type: DataTypes.BIGINT,

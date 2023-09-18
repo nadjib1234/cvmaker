@@ -2,6 +2,8 @@ const db = require(".././models");
 const seq = require("sequelize");
 const op = seq.Op;
 const crypto = require('crypto');
+const path = require('path');
+const fs = require('fs');
 const Fuse = require('fuse.js');
 require("dotenv").config();
 const { addPerson } = require("./person.controler");
@@ -133,18 +135,28 @@ const listStudents = async (req, res, next) => {
     try {
         // Fetching all students from the database
         const students = await db.student.findAll({
-            attributes: ['studentCode'],
-
             include: [ // Assuming you want to also fetch the associated person details for each student
                 {
                     model: db.person,
                     as: 'personProfile2',  // Alias you set in associations
-                    attributes: ['firstName', 'lastName', 'mail', 'phoneNumber', 'dateOfBirth'] // specify the attributes you want
+                    attributes: ['firstName', 'lastName', 'mail', 'phoneNumber', 'dateOfBirth', 'imagePath'] // specify the attributes you want
 
                 }
             ]
         });
-
+        for (const user of students) {
+            if (user.personProfile2.imagePath != null || user.personProfile.imagePath != '') {
+                const photoPath = path.join("uploads/profileImage/", user.personProfile2.imagePath); // get the photo file path
+                try {
+                    await fs.promises.access(photoPath, fs.constants.F_OK); // check if the file exists
+                    user.personProfile2.imagePath = await fs.promises.readFile(photoPath); // read the photo file contents
+                } catch (error) {
+                    console.error(error);
+                    user.personProfile2.imagePath = null;
+                }
+            }
+        }
+        console.log(students);
         // Return the list of students
         return res.send({
             message: "List of all students",
@@ -153,6 +165,7 @@ const listStudents = async (req, res, next) => {
         });
 
     } catch (error) {
+        console.log(error);
         return res.send({
             message: "An error occurred while fetching the list of students.",
             error: error.message,

@@ -15,20 +15,21 @@ async function addPerson(data) {
             };
         }
         let imagePath = '';
+
+        const existingUser = await db.person.findOne({ where: { mail: mail } });
+
+        if (existingUser) {
+            return {
+                message: 'Email already in use',
+                code: 409
+            };
+        }
         if (image) {
             // Decode the Base64-encoded image data
             const base64Image = image.split(';base64,').pop();
-            const imagePath = `${firstName}_${lastName}.jpg`;
-            // fs.writeFileSync("uploads/profileImage/" + imagePath, base64Image, (err) => {
-            //     if (err) {
-            //         console.error(err);
-            //         return {
-            //             message: 'Failed to save image',
-            //             code: 500
-            //         };
-            //     }
-            // });
-            fs.writeFile("uploads/profileImage/" + imagePath, base64Image, { encoding: 'base64' }, (err) => {
+            imagePath = `${firstName}_${Date.now()}.jpg`;
+
+            await fs.writeFile("uploads/profileImage/" + imagePath, base64Image, { encoding: 'base64' }, (err) => {
                 if (err) {
                     console.error(err);
 
@@ -39,24 +40,14 @@ async function addPerson(data) {
             });
 
         }
-        const existingUser = await db.person.findOne({ where: { mail: mail } });
-
-        if (existingUser) {
-            return {
-                message: 'Email already in use',
-                code: 409
-            };
-        }
-
         const person = await db.person.create({
             firstName,
             lastName,
             mail,
-            imagePath,
+            imagePath: imagePath,
             phoneNumber,
             dateOfBirth,
         });
-
         return person.ID_ROWID;
     } catch (error) {
         console.error(error);
