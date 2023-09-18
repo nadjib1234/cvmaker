@@ -8,7 +8,10 @@ const checkIfCodeExists = async (code) => {
     const student = await db.student.findOne({ where: { studentCode: code } });
     return !!student;
 }
-
+const checkIfCodeExistsT = async (code) => {
+    const student = await db.teacher.findOne({ where: { TeacherID: code } });
+    return !!student;
+}
 const generateStudentCode = (firstName, lastName, dateOfBirth,email) => {
     const currentDate = new Date().toISOString().split('T')[0];  // Gets the current date in 'YYYY-MM-DD' format
 
@@ -42,5 +45,6 @@ function generateUniqueUsername(firstName, lastName) {
 module.exports = {
     generateStudentCode,
     generateUniqueUsername,
-    checkIfCodeExists
+    checkIfCodeExists,
+    checkIfCodeExistsT
 };

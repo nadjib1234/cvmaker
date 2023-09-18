@@ -5,7 +5,7 @@ const Fuse = require('fuse.js'); // for search by multiple attributes "library a
 const crypto = require('crypto');
 require("dotenv").config();
 const { addPerson } = require("./person.controler");
-const { generateStudentCode } = require("./generator");
+const { generateStudentCode,checkIfCodeExistsT } = require("./generator");
 
 const addTeacher = async (req, res, next) => {
     try {
@@ -14,7 +14,6 @@ const addTeacher = async (req, res, next) => {
         // to create person :(firstName, lastName, mail, phoneNumber, dateOfBirth)
         // to create student we need to generat a code from his name and his date of birth
         const reqData = req.body.data;
-        const personID = await addPerson(reqData);
         const result = await addPerson(reqData);
         if (result.code === 400 || result.code === 409) {
             return res.send({
@@ -30,11 +29,12 @@ const addTeacher = async (req, res, next) => {
         let generatedCode = generateStudentCode(reqData.firstName, reqData.lastName, reqData.dateOfBirth, reqData.email);
         
         // Check if the generated code exists, if yes, then keep generating a new one until it's unique
-        while (await checkIfCodeExists(generatedCode)) {
+        while (await checkIfCodeExistsT(generatedCode)) {
             // Alter the generated code in some way to ensure uniqueness. This could be adding a random number, or using another mechanism.
             // For this example, I'm simply appending a random number to it. 
             // You might want to modify the generateStudentCode function or come up with a different mechanism for this.
-            generatedCode = generateStudentCode(reqData.firstName, reqData.lastName, reqData.dateOfBirth, reqData.email) + Math.floor(Math.random() * 1000);}
+            generatedCode = generateStudentCode(reqData.firstName, reqData.lastName, reqData.dateOfBirth, reqData.email) + Math.floor(Math.random() * 1000);
+        }
         // find a way to create it using user first & last name , date of birth , the actual date 
         /******* */
 
@@ -145,12 +145,12 @@ const listTeachers = async (req, res, next) => {
     try {
         // Fetching all teachers from the database
         const teachers = await db.teacher.findAll({
-            attributes: ['TeacherID', 'subject'],  // Added 'subject' here
+          
             include: [
                 {
                     model: db.person,
                     as: 'personProfile2',  // Alias you set in associations
-                    attributes: ['firstName', 'lastName', 'mail', 'phoneNumber', 'dateOfBirth']
+                    attributes: ['firstName', 'lastName', 'mail', 'phoneNumber', 'dateOfBirth','imagePath']
                 }
             ]
         });
