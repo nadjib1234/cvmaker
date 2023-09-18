@@ -2,6 +2,8 @@ const db = require(".././models");
 const seq = require("sequelize");
 const op = seq.Op;
 require("dotenv").config();
+const fs = require('fs');
+
 // because we will use it many time i made it as a separated function
 async function addPerson(data) {
     try {
@@ -12,9 +14,8 @@ async function addPerson(data) {
                 code: 400
             };
         }
-        if (image) {
+        let imagePath = '';
 
-        }
         const existingUser = await db.person.findOne({ where: { mail: mail } });
 
         if (existingUser) {
@@ -23,15 +24,30 @@ async function addPerson(data) {
                 code: 409
             };
         }
+        if (image) {
+            // Decode the Base64-encoded image data
+            const base64Image = image.split(';base64,').pop();
+            imagePath = `${firstName}_${Date.now()}.jpg`;
 
+            await fs.writeFile("uploads/profileImage/" + imagePath, base64Image, { encoding: 'base64' }, (err) => {
+                if (err) {
+                    console.error(err);
+
+                } else {
+                    console.log('Image uploaded successfully');
+                    // Now, you can do whatever you want with the image.
+                }
+            });
+
+        }
         const person = await db.person.create({
             firstName,
             lastName,
             mail,
+            imagePath: imagePath,
             phoneNumber,
-            dateOfBirth
+            dateOfBirth,
         });
-
         return person.ID_ROWID;
     } catch (error) {
         console.error(error);
@@ -42,6 +58,7 @@ async function addPerson(data) {
         };
     }
 }
+
 
 module.exports = {
     addPerson,

@@ -1,6 +1,7 @@
 const db = require(".././models");
 const seq = require("sequelize");
-const op = seq.Op;
+const path = require('path');
+const fs = require('fs');
 const bcrypt = require('bcrypt');
 require("dotenv").config();
 const { addPerson } = require("./person.controler");
@@ -73,12 +74,25 @@ const getAllUsers = async (req, res, next) => {
                 as: 'personProfile'
             }]
         });
+        for (const user of allUsers) {
+            if (user.personProfile.imagePath != null || user.personProfile.imagePath != '') {
+                const photoPath = path.join("uploads/profileImage/", user.personProfile.imagePath); // get the photo file path
+                try {
+                    await fs.promises.access(photoPath, fs.constants.F_OK); // check if the file exists
+                    user.personProfile.imagePath = await fs.promises.readFile(photoPath); // read the photo file contents
+                } catch (error) {
+                    console.error(error);
+                    user.personProfile.imagePath = null;
+                }
+            }
+        }
         return res.send({
             message: "Usrs list",
             allUsers: allUsers,
             code: 200,
         });
     } catch (error) {
+        console.log(error);
         return res.send({
             message: "An error occurred",
             error: error.message,
@@ -212,7 +226,7 @@ const getUserProfile = async (req, res, next) => {
 }
 const updateGeneralUserData = async (req, res, next) => {
     try {
-        const { userID, firstName, lastName, mail, phoneNumber, dateOfBirth } = req.body.data;
+        const { userID, firstName, lastName, mail, phoneNumber, dateOfBirth, role } = req.body.data;
         if (!userID || !firstName || !lastName || !mail || !phoneNumber || !dateOfBirth) {
             return {
                 message: "Error! There is missing data",
@@ -227,14 +241,17 @@ const updateGeneralUserData = async (req, res, next) => {
         });
 
         if (user && user.personProfile) {
+            user.role = role;
             user.personProfile.firstName = firstName;
             user.personProfile.lastName = lastName;
             user.personProfile.mail = mail;
             user.personProfile.dateOfBirth = dateOfBirth;
+            user.personProfile.phoneNumber = phoneNumber;
             await user.personProfile.save();
+            await user.save();
         }
         return res.send({
-            message: "User dara are updated",
+            message: `user '${user.personProfile.firstName} ${user.personProfile.lastName}' has been updated successfully.`,
             userData: user,
             code: 200,
         });

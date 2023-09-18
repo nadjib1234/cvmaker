@@ -12,7 +12,7 @@ userRouter.get("/ExploreSearchUsers/:key", jsonParser, userControler.ExploreSear
 
 // user profile
 userRouter.post("/getUserProfile", jsonParser, userControler.getUserProfile);
-userRouter.post("/updateGeneralUserData", jsonParser, userControler.updateGeneralUserData);
+userRouter.put("/updateGeneralUserData", jsonParser, userControler.updateGeneralUserData);
 userRouter.post("/updatePasword", jsonParser, userControler.updatePassword);
 
 
