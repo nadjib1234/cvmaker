@@ -60,15 +60,48 @@ const updateStudent = async (req, res, next) => {
             });
         }
         // Get the personId for the student
-        const studentRecord = await db.student.findOne({ where: { ID_ROWID: sudentid } });
+        const studentRecord = await db.student.findOne({
+            where: { ID_ROWID: sudentid },
 
+            include: [{
+                model: db.person,
+                as: 'personProfile2'
+            }]
+        });
+        const oldImageName = studentRecord.personProfile2.imagePath;
+        // delete old image if it exicte 
+        if (oldImageName != null && oldImageName != "") {
+            // Delete the existing image file (if it exists)
+            const existingImagePath = path.join("uploads/profileImage/", oldImageName);
+            if (fs.existsSync(existingImagePath)) {
+                fs.unlinkSync(existingImagePath);
+            }
+        }
+        let imagePath = '';
+        if (data.image) {
+            // Decode the Base64-encoded image data
+            const base64Image = data.image.split(';base64,').pop();
+            imagePath = `${data.firstName}_${Date.now()}.jpg`;
+
+            await fs.writeFile("uploads/profileImage/" + imagePath, base64Image, { encoding: 'base64' }, (err) => {
+                if (err) {
+                    console.error(err);
+
+                } else {
+                    console.log('Image uploaded successfully');
+                    // Now, you can do whatever you want with the image.
+                }
+            });
+
+        }
         // Now update the person using the personId from the student record
         await db.person.update({
             firstName: data.firstName,
             lastName: data.lastName,
             mail: data.mail,
             phoneNumber: data.phoneNumber,
-            dateOfBirth: data.dateOfBirth
+            dateOfBirth: data.dateOfBirth,
+            imagePath: imagePath
         }, {
             where: { ID_ROWID: studentRecord.personId }
         });
@@ -79,6 +112,7 @@ const updateStudent = async (req, res, next) => {
         });
 
     } catch (error) {
+        console.log(error);
         return res.send({
             message: "An error occurred while updating the student.",
             error: error.message,
@@ -99,14 +133,27 @@ const removeStudent = async (req, res, next) => {
         }
 
         // Fetch the student
-        const student = await db.student.findByPk(studentID);
+        const student = await db.student.findByPk(studentID, {
+            include: [{
+                model: db.person,
+                as: 'personProfile2'
+            }]
+        });
         if (!student) {
             return res.send({
                 message: "Error! Student not found.",
                 code: 404
             });
         }
-
+        const oldImageName = student.personProfile2.imagePath;
+        // delete old image if it exicte 
+        if (oldImageName != null && oldImageName != "") {
+            // Delete the existing image file (if it exists)
+            const existingImagePath = path.join("uploads/profileImage/", oldImageName);
+            if (fs.existsSync(existingImagePath)) {
+                fs.unlinkSync(existingImagePath);
+            }
+        }
         // Remove the associated person from the database
         await db.person.destroy({
             where: { ID_ROWID: student.personId }
