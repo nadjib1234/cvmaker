@@ -115,14 +115,27 @@ const removeUser = async (req, res, next) => {
         }
 
         // Fetch the user
-        const user = await db.user.findByPk(userID);
+        const user = await db.user.findByPk(userID, {
+            include: [{
+                model: db.person,
+                as: 'personProfile'
+            }]
+        });
         if (!user) {
             return res.send({
                 message: "Error! user not found.",
                 code: 404
             });
         }
-
+        const oldImageName = user.personProfile.imagePath;
+        // delete old image if it exicte 
+        if (oldImageName != null && oldImageName != "") {
+            // Delete the existing image file (if it exists)
+            const existingImagePath = path.join("uploads/profileImage/", oldImageName);
+            if (fs.existsSync(existingImagePath)) {
+                fs.unlinkSync(existingImagePath);
+            }
+        }
         // Remove the associated person from the database
         await db.person.destroy({
             where: { ID_ROWID: user.personId }
@@ -226,22 +239,49 @@ const getUserProfile = async (req, res, next) => {
 }
 const updateGeneralUserData = async (req, res, next) => {
     try {
-        const { userID, firstName, lastName, mail, phoneNumber, dateOfBirth, role } = req.body.data;
+        const { userID, firstName, lastName, mail, phoneNumber, dateOfBirth, role, image } = req.body.data;
         if (!userID || !firstName || !lastName || !mail || !phoneNumber || !dateOfBirth) {
             return {
                 message: "Error! There is missing data",
                 code: 400
             };
         }
+
         const user = await db.user.findByPk(userID, {
             include: [{
                 model: db.person,
                 as: 'personProfile'
             }]
         });
+        const oldImageName = user.personProfile.imagePath;
+        // delete old image if it exicte 
+        if (oldImageName != null && oldImageName != "") {
+            // Delete the existing image file (if it exists)
+            const existingImagePath = path.join("uploads/profileImage/", oldImageName);
+            if (fs.existsSync(existingImagePath)) {
+                fs.unlinkSync(existingImagePath);
+            }
+        }
+        let imagePath = '';
+        if (image) {
+            // Decode the Base64-encoded image data
+            const base64Image = image.split(';base64,').pop();
+            imagePath = `${firstName}_${Date.now()}.jpg`;
 
+            await fs.writeFile("uploads/profileImage/" + imagePath, base64Image, { encoding: 'base64' }, (err) => {
+                if (err) {
+                    console.error(err);
+
+                } else {
+                    console.log('Image uploaded successfully');
+                    // Now, you can do whatever you want with the image.
+                }
+            });
+
+        }
         if (user && user.personProfile) {
             user.role = role;
+            user.personProfile.imagePath = imagePath;
             user.personProfile.firstName = firstName;
             user.personProfile.lastName = lastName;
             user.personProfile.mail = mail;

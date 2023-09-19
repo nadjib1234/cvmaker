@@ -69,14 +69,46 @@ const updateTeacher = async (req, res, next) => {
             });
         }
 
-        const teacherRecord = await db.teacher.findOne({ where: { ID_ROWID: teacherId } });
+        const teacherRecord = await db.teacher.findOne({
+            where: { ID_ROWID: teacherId },
+            include: [{
+                model: db.person,
+                as: 'personProfile2'
+            }]
+        });
+        const oldImageName = teacherRecord.personProfile2.imagePath;
+        // delete old image if it exicte 
+        if (oldImageName != null && oldImageName != "") {
+            // Delete the existing image file (if it exists)
+            const existingImagePath = path.join("uploads/profileImage/", oldImageName);
+            if (fs.existsSync(existingImagePath)) {
+                fs.unlinkSync(existingImagePath);
+            }
+        }
+        let imagePath = '';
+        if (data.image) {
+            // Decode the Base64-encoded image data
+            const base64Image = data.image.split(';base64,').pop();
+            imagePath = `${data.firstName}_${Date.now()}.jpg`;
 
+            await fs.writeFile("uploads/profileImage/" + imagePath, base64Image, { encoding: 'base64' }, (err) => {
+                if (err) {
+                    console.error(err);
+
+                } else {
+                    console.log('Image uploaded successfully');
+                    // Now, you can do whatever you want with the image.
+                }
+            });
+
+        }
         await db.person.update({
             firstName: data.firstName,
             lastName: data.lastName,
             mail: data.mail,
             phoneNumber: data.phoneNumber,
-            dateOfBirth: data.dateOfBirth
+            dateOfBirth: data.dateOfBirth,
+            imagePath: imagePath
         }, {
             where: { ID_ROWID: teacherRecord.personId }
         });
@@ -112,14 +144,27 @@ const removeTeacher = async (req, res, next) => {
             });
         }
 
-        const teacher = await db.teacher.findByPk(teacherID);
+        const teacher = await db.teacher.findByPk(teacherID, {
+            include: [{
+                model: db.person,
+                as: 'personProfile2'
+            }]
+        });
         if (!teacher) {
             return res.send({
                 message: "Error! Teacher not found.",
                 code: 404
             });
         }
-
+        const oldImageName = student.teacher.imagePath;
+        // delete old image if it exicte 
+        if (oldImageName != null && oldImageName != "") {
+            // Delete the existing image file (if it exists)
+            const existingImagePath = path.join("uploads/profileImage/", oldImageName);
+            if (fs.existsSync(existingImagePath)) {
+                fs.unlinkSync(existingImagePath);
+            }
+        }
         await db.person.destroy({
             where: { ID_ROWID: teacher.personId }
         });
