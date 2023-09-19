@@ -23,6 +23,13 @@ const addStudent = async (req, res, next) => {
                 code: result.code,
             });
         }
+        if (result.code === 401) {
+            return res.send({
+                message:"corrigez votre email", 
+                error: result.message,
+                code: result.code,
+            });
+        }
         let generatedCode = generateStudentCode(reqData.firstName, reqData.lastName, reqData.dateOfBirth, reqData.email);
         
         // Check if the generated code exists, if yes, then keep generating a new one until it's unique
@@ -42,6 +49,7 @@ const addStudent = async (req, res, next) => {
             code: 200,
         });
     } catch (error) {
+        
         res.send({
             message: "An error occurred",
             error: error.message,
