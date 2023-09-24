@@ -1,8 +1,10 @@
 const db = require(".././models");
 const seq = require("sequelize");
 const op = seq.Op;
-const Fuse = require('fuse.js'); // for search by multiple attributes "library already installed by wisso"
 const crypto = require('crypto');
+const path = require('path');
+const fs = require('fs');
+const Fuse = require('fuse.js');
 require("dotenv").config();
 const { addPerson } = require("./person.controler");
 const { generateStudentCode,checkIfCodeExistsT } = require("./generator");
@@ -156,7 +158,7 @@ const removeTeacher = async (req, res, next) => {
                 code: 404
             });
         }
-        const oldImageName = student.teacher.imagePath;
+        const oldImageName = teacher.personProfile2.imagePath;
         // delete old image if it exicte 
         if (oldImageName != null && oldImageName != "") {
             // Delete the existing image file (if it exists)
@@ -190,15 +192,28 @@ const listTeachers = async (req, res, next) => {
     try {
         // Fetching all teachers from the database
         const teachers = await db.teacher.findAll({
-          
             include: [
                 {
                     model: db.person,
                     as: 'personProfile2',  // Alias you set in associations
-                    attributes: ['firstName', 'lastName', 'mail', 'phoneNumber', 'dateOfBirth','imagePath']
+                    attributes: ['firstName', 'lastName', 'mail', 'phoneNumber', 'dateOfBirth', 'imagePath']
                 }
             ]
         });
+
+        for (const teacher of teachers) {
+            if (teacher.personProfile2.imagePath != null || teacher.personProfile2.imagePath != '') {
+                const photoPath = path.join("uploads/profileImage/", teacher.personProfile2.imagePath); // get the photo file path
+                try {
+                    await fs.promises.access(photoPath, fs.constants.F_OK); // check if the file exists
+                    teacher.personProfile2.imagePath = await fs.promises.readFile(photoPath); // read the photo file contents
+                } catch (error) {
+                    console.error(error);
+                    teacher.personProfile2.imagePath = null;
+                }
+            }
+        }
+        console.log(teachers);
 
         // Return the list of teachers
         return res.send({
@@ -208,6 +223,7 @@ const listTeachers = async (req, res, next) => {
         });
 
     } catch (error) {
+        console.log(error);
         return res.send({
             message: "An error occurred while fetching the list of teachers.",
             error: error.message,
@@ -215,6 +231,7 @@ const listTeachers = async (req, res, next) => {
         });
     }
 };
+
 const ExploreSearch = async (req, res, next) => {
     try {
         const findKey = req.body.Key;
