@@ -5,8 +5,9 @@ const { response } = require("express");
 var jsonParser = bodyParser.json();
 const classControler = require("../controlors/class.controler");
 
-routeclass.post("/add", jsonParser,classControler.addClass);
-routeclass.delete("/remove/:id", jsonParser, classControler.deleteClass);
-routeclass.put("/update/:id",jsonParser,classControler.updateClass);
+routeclass.get("/listSalles", jsonParser, classControler.allClasses);
+routeclass.post("/addSalle", jsonParser, classControler.addClass);
+routeclass.delete("/removeSalle/:id", jsonParser, classControler.deleteClass);
+routeclass.put("/updateSalle/:id", jsonParser, classControler.updateClass);
 
 module.exports = routeclass;

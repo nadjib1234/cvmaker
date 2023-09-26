@@ -48,6 +48,12 @@ module.exports = function (sequelize, DataTypes) {
             otherKey: 'StudentID',  // Assuming the primary key name for student is StudentID
             as: 'students'
         });
+        program.hasMany(models.groupe, {
+            foreignKey: {
+                name: 'progID',
+                allowNull: true
+            }
+        });
 
     }
     return program;

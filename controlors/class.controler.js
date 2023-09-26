@@ -62,6 +62,7 @@ const updateClass = async (req, res, next) => {
         });
 
     } catch (error) {
+        console.log(error);
         return res.send({
             message: "An error occurred while updating the class.",
             error: error.message,
@@ -99,8 +100,27 @@ const deleteClass = async (req, res, next) => {
     }
 };
 
+const allClasses = async (req, res, next) => {
+    try {
+
+        const allClasses = await db.class.findAll();
+        return res.send({
+            message: `fetshing the list of all classes.`,
+            allClasses: allClasses,
+            code: 200
+        });
+
+    } catch (error) {
+        return res.send({
+            message: "An error occurred while fetshing the class.",
+            error: error.message,
+            code: 400
+        });
+    }
+};
 module.exports = {
     addClass,
     updateClass,
-    deleteClass
+    deleteClass,
+    allClasses
 };

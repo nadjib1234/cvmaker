@@ -5,13 +5,13 @@ const categorieController = require("../controlors/categorie.controler");
 var jsonParser = bodyParser.json();
 
 // Route for adding a new category
-routeCategorie.post("/add", jsonParser, categorieController.addCategorie);
+routeCategorie.post("/addCategorie", jsonParser, categorieController.addCategorie);
 
 // Route for updating a category
-routeCategorie.put("/update/:id", jsonParser, categorieController.updateCategorie);
+routeCategorie.put("/updateCategorie/:id", jsonParser, categorieController.updateCategorie);
 
 // Route for deleting a category
-routeCategorie.delete("/remove/:id", jsonParser, categorieController.removeCategorie);
-routeCategorie.get("/list", jsonParser, categorieController.listCategories);
-routeCategorie.get("/find",jsonParser,categorieController.exploreSearchCategories);
+routeCategorie.delete("/removeCategorie/:id", jsonParser, categorieController.removeCategorie);
+routeCategorie.get("/listCategorie", jsonParser, categorieController.listCategories);
+routeCategorie.get("/find", jsonParser, categorieController.exploreSearchCategories);
 module.exports = routeCategorie;
