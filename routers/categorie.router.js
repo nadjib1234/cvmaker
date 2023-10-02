@@ -13,5 +13,6 @@ routeCategorie.put("/updateCategorie/:id", jsonParser, categorieController.updat
 // Route for deleting a category
 routeCategorie.delete("/removeCategorie/:id", jsonParser, categorieController.removeCategorie);
 routeCategorie.get("/listCategorie", jsonParser, categorieController.listCategories);
+routeCategorie.get("/selectedListCategories", jsonParser, categorieController.selectedListCategories);
 routeCategorie.get("/find", jsonParser, categorieController.exploreSearchCategories);
 module.exports = routeCategorie;

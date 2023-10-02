@@ -23,10 +23,11 @@ module.exports = function (sequelize, DataTypes) {
         },
     });
     cour.associate = models => {
-        cour.hasOne(models.program, {
-            foreignKey: 'courId',
-            onDelete: 'CASCADE' // If a person is deleted, the related user is also deleted
-        });
+        cour.belongsTo(models.program,
+            {
+                foreignKey: 'progId',
+                onDelete: 'CASCADE' // If a person is deleted, the related user is also deleted
+            });
     }
     return cour;
 };

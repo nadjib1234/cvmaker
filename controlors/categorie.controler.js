@@ -153,7 +153,26 @@ const listCategories = async (req, res, next) => {
         });
     }
 };
-
+const selectedListCategories = async (req, res, next) => {
+    try {
+        const categories = await db.categorie.findAll({
+            where: {
+                supperCatID: null
+            }
+        });
+        return res.send({
+            message: "List of all categories.",
+            categories: categories,
+            code: 200
+        });
+    } catch (error) {
+        return res.send({
+            message: "An error occurred while fetching categories.",
+            error: error.message,
+            code: 400
+        });
+    }
+};
 const Fuse = require('fuse.js');
 
 const exploreSearchCategories = async (req, res, next) => {
@@ -202,5 +221,6 @@ module.exports = {
     updateCategorie,
     removeCategorie,
     listCategories,
+    selectedListCategories,
     exploreSearchCategories
 };

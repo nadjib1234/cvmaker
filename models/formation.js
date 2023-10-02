@@ -21,16 +21,17 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.BOOLEAN,
             allowNull: true // Assuming this is optional
         },
-        nbrEtudiant: {
+        nbrStudent: {
             type: DataTypes.BIGINT,
             allowNull: true // Assuming this is optional
         },
     });
     formation.associate = models => {
-        formation.hasOne(models.program, {
-            foreignKey: 'formationId',
-            onDelete: 'CASCADE' // If a person is deleted, the related user is also deleted
-        });
+        formation.belongsTo(models.program,
+            {
+                foreignKey: 'progId',
+                onDelete: 'CASCADE' // If a person is deleted, the related user is also deleted
+            });
     }
     return formation;
 };
