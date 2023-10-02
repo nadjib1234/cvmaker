@@ -24,13 +24,6 @@ module.exports = function (sequelize, DataTypes) {
 
     },);
     session.associate = models => {
-        // //create an ID_ROWID ref to the the last modification (updatedBy)
-        // address.belongsTo(models.user, {
-        //     foreignKey: {
-        //         name: 'updatedBy',
-        //         allowNull: true
-        //     }
-        // });
     }
     return session;
 };

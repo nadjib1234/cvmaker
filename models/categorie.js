@@ -12,25 +12,21 @@ module.exports = function (sequelize, DataTypes) {
             allowNull: true
 
         },
-        discription: {
-            type: DataTypes.TEXT,
-            allowNull: true
-
-        },
         isPublished: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: false // Assuming default value as 'false' if not provided
+        },
+        publishedAt: {
+            type: DataTypes.DATEONLY,
+            allowNull: true // Assuming this is optional
         },
         isSubCategory: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: false // Assuming default value as 'false' if not provided
         },
-        supperCatID: {
-            type: DataTypes.BIGINT,
-            allowNull: true
-        },
+
     },);
     categorie.associate = models => {
 
@@ -41,6 +37,14 @@ module.exports = function (sequelize, DataTypes) {
                 allowNull: true
             }
         });
+        // a categorie can have many subCategories
+        categorie.hasMany(models.categorie, {
+            foreignKey: {
+                name: 'supperCatID',
+                allowNull: true
+            }
+        });
     }
+
     return categorie;
 };

@@ -8,23 +8,20 @@ module.exports = function (sequelize, DataTypes) {
             primaryKey: true
         },
         className: {
-            type:DataTypes.STRING,
+            type: DataTypes.STRING,
             allowNull: true
         },
-        capacité:{
-            type:DataTypes.BIGINT,
-            allowNull:true
+        capacité: {
+            type: DataTypes.BIGINT,
+            allowNull: true
         }
-    
+
     },);
     classe.associate = models => {
-        // //create an ID_ROWID ref to the the last modification (updatedBy)
-        // address.belongsTo(models.user, {
-        //     foreignKey: {
-        //         name: 'updatedBy',
-        //         allowNull: true
-        //     }
-        // });
+        classe.belongsToMany(models.groupe, {
+            through: models.session,
+            foreignKey: 'classID', // Using the correct primary key name for program
+        });
     }
-   return classe;
+    return classe;
 };

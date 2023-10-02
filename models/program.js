@@ -17,7 +17,17 @@ module.exports = function (sequelize, DataTypes) {
             allowNull: true
 
         },
+        type: {
+            type: DataTypes.STRING,
+            allowNull: true
+
+        },
         isPublished: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false // Assuming default value as 'false' if not provided
+        },
+        isSkiped: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: false // Assuming default value as 'false' if not provided
@@ -47,6 +57,20 @@ module.exports = function (sequelize, DataTypes) {
             foreignKey: 'progID', // Using the correct primary key name for program
             otherKey: 'StudentID',  // Assuming the primary key name for student is StudentID
             as: 'students'
+        });
+        program.hasMany(models.groupe, {
+            foreignKey: {
+                name: 'progID',
+                allowNull: true
+            }
+        });
+        program.hasOne(models.formation, {
+            foreignKey: 'progId',
+            onDelete: 'CASCADE' // If a person is deleted, the related user is also deleted
+        });
+        program.hasOne(models.cour, {
+            foreignKey: 'progId',
+            onDelete: 'CASCADE' // If a person is deleted, the related user is also deleted
         });
 
     }

@@ -13,28 +13,27 @@ require("dotenv").config();
 
 const addCategorie = async (req, res, next) => {
     try {
-        const { title, discription, isPublished,supperCatID } = req.body.data;
-
+        const { title, isPublished, supperCatID } = req.body.data;
+        console.log(req.body.data);
         // Check if the necessary data (title) is provided
         if (!title) {
             return res.send({
                 message: "Error! Title is required.",
-                code: 400
+                code: 409
             });
         }
-    
+
         // Creating a new category record in the database
         const newCategorie = await db.categorie.create({
             title: title,
-            discription: discription,
             isPublished: isPublished,
-            isSubCategory:supperCatID?true:false,
+            isSubCategory: supperCatID ? true : false,
             supperCatID: supperCatID
         });
 
         return res.send({
             message: `Category '${title}' has been added successfully.`,
-            categoryId: newCategorie.ID_ROWID,
+            newCategory: newCategorie,
             code: 200
         });
 
@@ -65,7 +64,12 @@ const removeCategorie = async (req, res, next) => {
                 code: 400
             });
         }
-
+        await db.categorie.destroy({
+            where: {
+                supperCatID: categorieId
+            },
+            force: true // This ensures that it deletes even if the associations are not properly defined
+        });
         await db.categorie.destroy({
             where: { ID_ROWID: categorieId }
         });
@@ -87,10 +91,10 @@ const removeCategorie = async (req, res, next) => {
 const updateCategorie = async (req, res, next) => {
     try {
         const categorieId = req.params.id;  // Assuming the category ID is passed as a parameter in the URL
-        const { title, discription, isPublished, isSubCategory, supperCatID } = req.body.data;
+        const { title, isPublished, supperCatID } = req.body.data;
 
         // Check if category ID is provided
-        if (!categorieId) {
+        if (!categorieId || !title) {
             return res.send({
                 message: "Error! Category ID is required for updating.",
                 code: 400
@@ -100,16 +104,22 @@ const updateCategorie = async (req, res, next) => {
         // Updating the category record in the database
         await db.categorie.update({
             title: title,
-            discription: discription,
             isPublished: isPublished,
-            isSubCategory:supperCatID?true:false,
+            isSubCategory: supperCatID ? true : false,
             supperCatID: supperCatID
         }, {
             where: { ID_ROWID: categorieId }
         });
-
+        const updatedData = await db.categorie.findByPk(categorieId, {
+            include: {
+                model: db.categorie,
+                as: 'categories',
+                attributes: ['ID_ROWID']
+            }
+        });
         return res.send({
             message: `Category with ID '${categorieId}' has been updated successfully.`,
+            updatedData: updatedData,
             code: 200
         });
 
@@ -124,9 +134,12 @@ const updateCategorie = async (req, res, next) => {
 const listCategories = async (req, res, next) => {
     try {
         const categories = await db.categorie.findAll({
-            attributes: ['title', 'discription', 'isPublished', 'isSubCategory', 'supperCatID']
+            include: {
+                model: db.categorie,
+                as: 'categories',
+                attributes: ['ID_ROWID']
+            }
         });
-
         return res.send({
             message: "List of all categories.",
             categories: categories,
@@ -140,13 +153,32 @@ const listCategories = async (req, res, next) => {
         });
     }
 };
-
+const selectedListCategories = async (req, res, next) => {
+    try {
+        const categories = await db.categorie.findAll({
+            where: {
+                supperCatID: null
+            }
+        });
+        return res.send({
+            message: "List of all categories.",
+            categories: categories,
+            code: 200
+        });
+    } catch (error) {
+        return res.send({
+            message: "An error occurred while fetching categories.",
+            error: error.message,
+            code: 400
+        });
+    }
+};
 const Fuse = require('fuse.js');
 
 const exploreSearchCategories = async (req, res, next) => {
     try {
         const findKey = req.body.Key;
-        
+
         if (!findKey) {
             return res.send({
                 message: "Search key is missing.",
@@ -167,12 +199,12 @@ const exploreSearchCategories = async (req, res, next) => {
         const fuse = new Fuse(itemsForSearching, options);
         const result = fuse.search(findKey);
         const filteredItems = result.map(item => item.item);
-            return res.send({
-                message: "Search results for categories.",
-                categories: filteredItems,
-                code: 200
-            });
-       
+        return res.send({
+            message: "Search results for categories.",
+            categories: filteredItems,
+            code: 200
+        });
+
     } catch (error) {
         return res.send({
             message: "An error occurred during the search.",
@@ -189,5 +221,6 @@ module.exports = {
     updateCategorie,
     removeCategorie,
     listCategories,
+    selectedListCategories,
     exploreSearchCategories
 };

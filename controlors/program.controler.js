@@ -7,12 +7,12 @@ require("dotenv").config();
 const addProgram = async (req, res, next) => {
     try {
         // Extract the data sent by the user request
-        const { title, discription ,categID} = req.body.data;
-
+        const { title, discription, categID, type, isSkip } = req.body.dataProgram;
+        console.log(req.body);
         // Check if the title is provided
-        if (!title) {
+        if (!title || !type) {
             return res.send({
-                message: "Error! There is missing data (title and is required).",
+                message: "Error! There is missing data.",
                 code: 400
             });
         }
@@ -21,17 +21,43 @@ const addProgram = async (req, res, next) => {
         const program = await db.program.create({
             title: title,
             discription: discription,
-            categID:categID
+            type: type,
+            isSkiped: isSkip,
+            categID: categID
         });
-
+        if (!isSkip) {
+            if (type == "formation") {
+                const { startDay, endDay, inscriptionEndDay, isLimited, nbrParticipat } = req.body.dataType
+                const formation = await db.formation.create({
+                    startDate: startDay,
+                    endDate: endDay,
+                    isLimited: isLimited,
+                    nbrStudent: nbrParticipat,
+                    progId: program.ID_ROWID
+                });
+                program.EndInsciptionDate = inscriptionEndDay;
+                program.save();
+            }
+            else if (type == "cour") {
+                const { inscriptionEndDay, nbrSession, hoursBySession } = req.body.dataType
+                const cour = await db.cour.create({
+                    sessionTiming: hoursBySession,
+                    sessionsNumber: nbrSession,
+                    progId: program.ID_ROWID
+                });
+                program.EndInsciptionDate = inscriptionEndDay;
+                program.save();
+            }
+        }
         // Return a success message along with the ID of the newly created program
         return res.send({
             message: `Program '${title}' has been added successfully.`,
-            programId: program.ID_ROWID,
+            program: program,
             code: 200
         });
 
     } catch (error) {
+        console.log(error);
         return res.send({
             message: "An error occurred while adding the program.",
             error: error.message,
@@ -44,7 +70,7 @@ const updateProgram = async (req, res, next) => {
     try {
         // Extract the data sent by the user request
         const programId = req.params.id;
-        const { title, discription ,categID} = req.body.data;
+        const { title, discription, categID } = req.body.data;
 
         // Check if the necessary data is provided
         if (!title && !discription && !categID) {
@@ -58,7 +84,7 @@ const updateProgram = async (req, res, next) => {
         await db.program.update({
             title: title,
             discription: discription,
-            categID:categID
+            categID: categID
         }, {
             where: { ID_ROWID: programId }
         });
