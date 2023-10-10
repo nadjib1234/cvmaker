@@ -126,8 +126,65 @@ const removeProgram = async (req, res, next) => {
     }
 };
 
+// ... your existing imports and functions
+
+const findNonSkippedPrograms = async (req, res, next) => {
+    try {
+        const nonSkippedPrograms = await db.program.findAll({
+            where: {
+                isSkiped: false
+            }
+        });
+        
+        return res.send({
+            message: "List of non-skipped programs.",
+            programs: nonSkippedPrograms,
+            code: 200
+        });
+    } catch (error) {
+        return res.send({
+            message: "An error occurred while fetching non-skipped programs.",
+            error: error.message,
+            code: 400
+        });
+    }
+};
+
+const listRegistrablePrograms = async (req, res, next) => {
+    try {
+        const currentDate = new Date();
+        
+        const registrablePrograms = await db.program.findAll({
+            where: {
+                isSkiped: false,
+                PublishedDate: {
+                    [op.lt]: currentDate  // less than current date
+                },
+                EndInsciptionDate: {
+                    [op.gt]: currentDate  // greater than current date
+                }
+            }
+        });
+
+        return res.send({
+            message: "List of registrable programs.",
+            programs: registrablePrograms,
+            code: 200
+        });
+    } catch (error) {
+        return res.send({
+            message: "An error occurred while fetching registrable programs.",
+            error: error.message,
+            code: 400
+        });
+    }
+};
+
 module.exports = {
     addProgram,
     updateProgram,
-    removeProgram
+    removeProgram,
+    findNonSkippedPrograms,  // added
+    listRegistrablePrograms  // added
 };
+

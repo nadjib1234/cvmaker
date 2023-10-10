@@ -40,12 +40,13 @@ const addStudent = async (req, res, next) => {
             generatedCode = generateStudentCode(reqData.firstName, reqData.lastName, reqData.dateOfBirth, reqData.email) + Math.floor(Math.random() * 1000);}
 
         // create the student 
-        await db.student.create({
+        const createdStudent =  await db.student.create({
             studentCode: generatedCode,
             personId: result
         })
         return res.send({
             message: "This user has been added successfully to Your list of student",
+            studentId: createdStudent.ID_ROWID, 
             code: 200,
         });
     } catch (error) {
