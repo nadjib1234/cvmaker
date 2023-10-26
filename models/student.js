@@ -13,9 +13,9 @@ module.exports = function (sequelize, DataTypes) {
             unique: true
         },
         isActive: {
-            type: DataTypes.BOOLEAN,
+            type: DataTypes.ENUM('Active', 'Inactive'),
             allowNull: false,
-            defaultValue: true // Assuming default value as 'false' if not provided
+            defaultValue: 'Inactive'
         },
         personId: {
             type: DataTypes.BIGINT,

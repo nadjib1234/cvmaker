@@ -97,9 +97,58 @@ const updateGroupe = async (req, res, next) => {
         });
     }
 };
+// Programme Regestraions part
+const listProgrammeGroups = async (req, res, next) => {
+    try {
+        const progId = req.body.progId;
+        const groups = await db.groupe.findAll({
+            where: {
+                progID: progId
+            },
+            include: [
+                {
+                    model: db.teacher,
+                    as: 'teachers',
+                    include: [{
+                        model: db.person,
+                        as: 'personProfile2',
+                        attributes: ['firstName', 'lastName']
+                    }
+                    ]
+                },
+                {
+                    model: db.student,
+                    as: 'students',
+                    attributes: ['ID_ROWID']
+                }
+
+            ]
+        });
+        if (!groups) {
+            return res.send({
+                message: "No groups found.",
+                code: 404
+            });
+        }
+
+        return res.send({
+            message: "Groups fetched successfully.",
+            groups: groups,
+            code: 200
+        });
+
+    } catch (error) {
+        return res.send({
+            message: "An error occurred while fetching the registrations.",
+            error: error.message,
+            code: 400
+        });
+    }
+};
 // Exporting the functions
 module.exports = {
     addGroupe,
     removeGroupe,
-    updateGroupe
+    updateGroupe,
+    listProgrammeGroups
 };

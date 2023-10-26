@@ -31,7 +31,7 @@ module.exports = function (sequelize, DataTypes) {
         });
         groupe.belongsTo(models.program, {
             foreignKey: {
-                name: 'categID',
+                name: 'progID',
                 allowNull: true
             }
         });

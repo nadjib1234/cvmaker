@@ -54,9 +54,9 @@ module.exports = function (sequelize, DataTypes) {
         // many student regist in our programes
         program.belongsToMany(models.student, {
             through: models.registration,
+            as: 'students',
             foreignKey: 'progID', // Using the correct primary key name for program
             otherKey: 'StudentID',  // Assuming the primary key name for student is StudentID
-            as: 'students'
         });
         program.hasMany(models.groupe, {
             foreignKey: {

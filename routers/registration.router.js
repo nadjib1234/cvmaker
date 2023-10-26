@@ -7,4 +7,8 @@ var jsonParser = bodyParser.json();
 routeRegistration.post("/add", jsonParser, registrationController.addRegistration);
 // Route for deleting a registration
 routeRegistration.delete("/remove/:id", jsonParser, registrationController.removeRegistration);
+routeRegistration.get("/list", jsonParser, registrationController.listRegistrations);
+// Programme Regestraions part
+routeRegistration.post("/programmeListRegestarion", jsonParser, registrationController.listProgrammeRegistrations);
+
 module.exports = routeRegistration;

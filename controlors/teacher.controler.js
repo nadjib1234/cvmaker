@@ -1,11 +1,13 @@
 const db = require(".././models");
 const seq = require("sequelize");
 const op = seq.Op;
-const Fuse = require('fuse.js'); // for search by multiple attributes "library already installed by wisso"
 const crypto = require('crypto');
+const path = require('path');
+const fs = require('fs');
+const Fuse = require('fuse.js');
 require("dotenv").config();
 const { addPerson } = require("./person.controler");
-const { generateStudentCode } = require("./generator");
+const { generateStudentCode,checkIfCodeExistsT } = require("./generator");
 
 const addTeacher = async (req, res, next) => {
     try {
@@ -14,7 +16,6 @@ const addTeacher = async (req, res, next) => {
         // to create person :(firstName, lastName, mail, phoneNumber, dateOfBirth)
         // to create student we need to generat a code from his name and his date of birth
         const reqData = req.body.data;
-        const personID = await addPerson(reqData);
         const result = await addPerson(reqData);
         if (result.code === 400 || result.code === 409) {
             return res.send({
@@ -27,7 +28,15 @@ const addTeacher = async (req, res, next) => {
         // generat student code : an unique id we use to reference to the student but for security reason we do not use it as a table primary key
         // student code is available for others to see 
         // primary key is not available 
-        const generatedCode = generateStudentCode(reqData.firstName, reqData.lastName, reqData.dateOfBirth);
+        let generatedCode = generateStudentCode(reqData.firstName, reqData.lastName, reqData.dateOfBirth, reqData.email);
+        
+        // Check if the generated code exists, if yes, then keep generating a new one until it's unique
+        while (await checkIfCodeExistsT(generatedCode)) {
+            // Alter the generated code in some way to ensure uniqueness. This could be adding a random number, or using another mechanism.
+            // For this example, I'm simply appending a random number to it. 
+            // You might want to modify the generateStudentCode function or come up with a different mechanism for this.
+            generatedCode = generateStudentCode(reqData.firstName, reqData.lastName, reqData.dateOfBirth, reqData.email) + Math.floor(Math.random() * 1000);
+        }
         // find a way to create it using user first & last name , date of birth , the actual date 
         /******* */
 
@@ -149,7 +158,7 @@ const removeTeacher = async (req, res, next) => {
                 code: 404
             });
         }
-        const oldImageName = student.teacher.imagePath;
+        const oldImageName = teacher.personProfile2.imagePath;
         // delete old image if it exicte 
         if (oldImageName != null && oldImageName != "") {
             // Delete the existing image file (if it exists)
@@ -183,15 +192,28 @@ const listTeachers = async (req, res, next) => {
     try {
         // Fetching all teachers from the database
         const teachers = await db.teacher.findAll({
-            attributes: ['TeacherID', 'subject'],  // Added 'subject' here
             include: [
                 {
                     model: db.person,
                     as: 'personProfile2',  // Alias you set in associations
-                    attributes: ['firstName', 'lastName', 'mail', 'phoneNumber', 'dateOfBirth']
+                    attributes: ['firstName', 'lastName', 'mail', 'phoneNumber', 'dateOfBirth', 'imagePath']
                 }
             ]
         });
+
+        for (const teacher of teachers) {
+            if (teacher.personProfile2.imagePath != null || teacher.personProfile2.imagePath != '') {
+                const photoPath = path.join("uploads/profileImage/", teacher.personProfile2.imagePath); // get the photo file path
+                try {
+                    await fs.promises.access(photoPath, fs.constants.F_OK); // check if the file exists
+                    teacher.personProfile2.imagePath = await fs.promises.readFile(photoPath); // read the photo file contents
+                } catch (error) {
+                    console.error(error);
+                    teacher.personProfile2.imagePath = null;
+                }
+            }
+        }
+        console.log(teachers);
 
         // Return the list of teachers
         return res.send({
@@ -201,6 +223,7 @@ const listTeachers = async (req, res, next) => {
         });
 
     } catch (error) {
+        console.log(error);
         return res.send({
             message: "An error occurred while fetching the list of teachers.",
             error: error.message,
@@ -208,6 +231,7 @@ const listTeachers = async (req, res, next) => {
         });
     }
 };
+
 const ExploreSearch = async (req, res, next) => {
     try {
         const findKey = req.body.Key;

@@ -49,14 +49,23 @@ async function addPerson(data) {
             dateOfBirth,
         });
         return person.ID_ROWID;
-    } catch (error) {
-        console.error(error);
-        return {
-            message: "An error occurred",
-            error: error.message,
-            code: 400
-        };
     }
+    catch (error) {
+        console.error(error);
+        // Check if error is a validation error
+        if (error.name === 'SequelizeValidationError') { 
+            return {
+                message:"corrigez votre email", 
+                code: 401
+            };
+        }else{
+        return {
+            message: "An error ",
+            error: error.message,
+            code: 400 // This might be more appropriate for unknown server errors.
+        };}
+    }
+      
 }
 
 
