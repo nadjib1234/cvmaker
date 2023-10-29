@@ -3,19 +3,19 @@ const seq = require("sequelize");
 const op = seq.Op;
 require("dotenv").config();
 
-const addRegistration = async (req, res, next) => {
+const addPayment = async (req, res, next) => {
     try {
-        const { IDstudent, date, Idprogram } = req.body.data;
+        const { IDstudent, montant, Idprogram } = req.body.data;
 
         // Check if the necessary data is provided
-        if (!IDstudent || !date || !Idprogram) {
+        if (!IDstudent || !montant || !Idprogram) {
             return res.send({
                 message: "Error! There is missing data.",
                 code: 400
             });
         }
 
-        // Check if the student is already registered for the program
+        // Check if the student is registered for the program
         const existingRegistration = await db.registration.findOne({
             where: {
                 StudentID: IDstudent,
@@ -23,29 +23,44 @@ const addRegistration = async (req, res, next) => {
             }
         });
 
-        if (existingRegistration) {
+        if (!existingRegistration) {
             return res.send({
-                message: "Error! The student is already registered for this program.",
-                code: 409 // Conflict
+                message: "Error! The student is not registered for this program.",
+                code: 400
             });
         }
 
-        // Creating a new class record in the database
-        const newregistration = await db.registration.create({
-            dateInscription: date,
+        // Check if the student has already made a payment for this program
+        const existingPayment = await db.payment.findOne({
+            where: {
+                StudentID: IDstudent,
+                progID: Idprogram
+            }
+        });
+
+        if (existingPayment) {
+            return res.send({
+                message: "Error! The student has already made a payment for this program.",
+                code: 409
+            });
+        }
+
+        // Creating a new payment record in the database
+        const newPayment = await db.payment.create({
+            montant: montant,
             progID: Idprogram,
             StudentID: IDstudent
         });
 
         return res.send({
-            message: `The registration has been added successfully.`,
-            classId: newregistration.ID_ROWID,
+            message: `The payment has been added successfully.`,
+            paymentId: newPayment.ID_ROWID,
             code: 200
         });
 
     } catch (error) {
         return res.send({
-            message: "An error occurred while adding the registration.",
+            message: "An error occurred while adding the payment.",
             error: error.message,
             code: 400
         });
@@ -53,53 +68,45 @@ const addRegistration = async (req, res, next) => {
 };
 
 
-/**
- * Delete a registration from the database.
- *
- * @param {Object} req - The request object.
- * @param {Object} res - The response object.
- * @param {Function} next - The next middleware function.
- */
-
-const removeRegistration = async (req, res, next) => {
+const removePayment = async (req, res, next) => {
     try {
-        const registrationId = req.params.id; // Assuming the registration ID is passed as a parameter in the URL
+        const paymentId = req.params.id;
 
-        if (!registrationId) {
+        if (!paymentId) {
             return res.status(400).json({
-                message: "Error! Registration ID is required for deletion.",
+                message: "Error! Payment ID is required for deletion.",
                 code: 400
             });
         }
 
-        const deletedRegistration = await db.registration.destroy({
-            where: { ID_ROWID: registrationId }
+        const deletedPayment = await db.payment.destroy({
+            where: { ID_ROWID: paymentId }
         });
 
-        if (!deletedRegistration) {
+        if (!deletedPayment) {
             return res.status(404).json({
-                message: "Error! Registration not found.",
+                message: "Error! Payment not found.",
                 code: 404
             });
         }
 
         return res.status(200).json({
-            message: "Registration deleted successfully!",
+            message: "Payment deleted successfully!",
             code: 200
         });
 
     } catch (error) {
         return res.status(500).json({
-            message: "An error occurred while deleting the registration.",
+            message: "An error occurred while deleting the payment.",
             error: error.message,
             code: 500
         });
     }
 };
 
-const listRegistrations = async (req, res, next) => {
+const listPayments = async (req, res, next) => {
     try {
-        const registrations = await db.registration.findAll({
+        const payments = await db.payment.findAll({
             include: [
                 {
                     model: db.student,
@@ -117,31 +124,32 @@ const listRegistrations = async (req, res, next) => {
                 }
             ]
         });
-console.log(registrations);
-        if (!registrations) {
+
+        if (!payments) {
             return res.send({
-                message: "No registrations found.",
+                message: "No payments found.",
                 code: 404
             });
         }
 
         return res.send({
-            message: "Registrations fetched successfully.",
-            registrations: registrations,
+            message: "Payments fetched successfully.",
+            payments: payments,
             code: 200
         });
 
     } catch (error) {
         return res.send({
-            message: "An error occurred while fetching the registrations.",
+            message: "An error occurred while fetching the payments.",
             error: error.message,
             code: 400
         });
     }
 };
-const getStudentsForProgram = async (req, res, next) => {
+
+const getStudentsForProgramPayments = async (req, res, next) => {
     try {
-        const programId = req.params.id; // Assuming the program ID is passed as a parameter in the URL
+        const programId = req.params.id;
 
         if (!programId) {
             return res.status(400).json({
@@ -150,8 +158,7 @@ const getStudentsForProgram = async (req, res, next) => {
             });
         }
 
-        // Fetch all registrations for the specified program
-        const registrations = await db.registration.findAll({
+        const payments = await db.payment.findAll({
             where: { progID: programId },
             include: [{
                 model: db.student,
@@ -164,38 +171,36 @@ const getStudentsForProgram = async (req, res, next) => {
             }]
         });
 
-        // Transform the result into a desired structure
-        const students = registrations.map(reg => {
-            const student = reg.students;
+        const students = payments.map(pay => {
+            const student = pay.students;
             return {
                 id: student.ID_ROWID,
                 name: `${student.personProfile2.firstName} ${student.personProfile2.lastName}`,
                 phone: student.personProfile2.phoneNumber,
                 email: student.personProfile2.mail,
-                dateOfBirth: student.personProfile2.dateOfBirth
+                dateOfBirth: student.personProfile2.dateOfBirth,
+                montant: pay.montant
             };
         });
 
         return res.status(200).json({
-            message: "Students fetched successfully.",
+            message: "Students with payments fetched successfully.",
             students: students,
             code: 200
         });
 
     } catch (error) {
         return res.status(500).json({
-            message: "An error occurred while fetching students for the program.",
+            message: "An error occurred while fetching students for the program payments.",
             error: error.message,
             code: 500
         });
     }
 };
 
-// Remember to export the new function
 module.exports = {
-    addRegistration,
-    removeRegistration,
-    listRegistrations,
-    getStudentsForProgram // Newly added method
+    addPayment,
+    removePayment,
+    listPayments,
+    getStudentsForProgramPayments
 };
-// Exporting the functions so they can be used elsewhere

@@ -8,5 +8,5 @@ routeRegistration.post("/add", jsonParser, registrationController.addRegistratio
 // Route for deleting a registration
 routeRegistration.delete("/remove/:id", jsonParser, registrationController.removeRegistration);
 routeRegistration.get("/list", jsonParser, registrationController.listRegistrations);
-
+routeRegistration.get("/studentforprogram/:id", jsonParser, registrationController.getStudentsForProgram);
 module.exports = routeRegistration;

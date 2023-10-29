@@ -45,6 +45,13 @@ module.exports = function (sequelize, DataTypes) {
             through: models.studentGroup,
             foreignKey: 'StudentID', // Using the correct primary key name for student
         });
+        student.belongsToMany(models.program, {
+            through: models.payment,
+            foreignKey: 'StudentID',
+            otherKey: 'progID',
+            as: 'payments'
+        });
+        
     }
     return student;
 };

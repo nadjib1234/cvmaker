@@ -72,7 +72,13 @@ module.exports = function (sequelize, DataTypes) {
             foreignKey: 'progId',
             onDelete: 'CASCADE' // If a person is deleted, the related user is also deleted
         });
-
+        program.belongsToMany(models.student, {
+            through: models.payment,
+            foreignKey: 'progID',
+            otherKey: 'StudentID',
+            as: 'payments'
+        });
+        
     }
     return program;
 };

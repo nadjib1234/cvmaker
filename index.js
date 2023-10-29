@@ -7,11 +7,11 @@ const studentRouter = require('./routers/student.router'); // Adjusted path to t
 const teacherRouter = require('./routers/teacher.router');
 const programRouter = require('./routers/programe.router');
 const regisrationRouter = require('./routers/registration.router');
+const paymentRouter=require('./routers/payment.router');
 const classRouter = require('./routers/class.router');
 const categorieRouter = require('./routers/categorie.router');
 const groupeRouter = require('./routers/groupe.router');
 const GSRouter = require('./routers/studentgroupe.router');
-
 const connexionRouter = require('./routers/connexion.router');
 const userRouter = require('./routers/user.router');
 const schoolRouter = require('./routers/school.router');
@@ -35,6 +35,7 @@ app.use('/DADAM_Backend/students', studentRouter);
 app.use('/DADAM_Backend/teachers', teacherRouter);
 app.use('/DADAM_Backend/program', programRouter);
 app.use('/DADAM_Backend/registration', regisrationRouter);
+app.use('/DADAM_Backend/payment', paymentRouter);
 app.use('/DADAM_Backend/class', classRouter);
 app.use('/DADAM_Backend/categorie', categorieRouter);
 app.use('/DADAM_Backend/groupe', groupeRouter);
