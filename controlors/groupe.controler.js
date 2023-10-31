@@ -6,7 +6,7 @@ require("dotenv").config();
 // Function to add a new group to the database
 const addGroupe = async (req, res, next) => {
     try {
-        const { GroupeName } = req.body.data;
+        const { GroupeName, capacity, teachers } = req.body.data;
 
         // Check if the necessary data (group name) is provided
         if (!GroupeName) {
@@ -18,9 +18,17 @@ const addGroupe = async (req, res, next) => {
 
         // Creating a new group record in the database
         const newGroupe = await db.groupe.create({
-            GroupeName: GroupeName
+            GroupeName: GroupeName,
+            capacity: capacity
         });
-
+        if (teachers.length != 0) {
+            teachers.map(async (teacher) => {
+                await db.teacherGroup.create({
+                    GroupeID: newGroupe.ID_ROWID,
+                    TeacherID: teacher.ID_ROWID
+                });
+            });
+        }
         return res.send({
             message: `Group '${GroupeName}' has been added successfully.`,
             groupId: newGroupe.ID_ROWID,
@@ -69,7 +77,7 @@ const removeGroupe = async (req, res, next) => {
 const updateGroupe = async (req, res, next) => {
     try {
         const groupId = req.params.id; // Assuming the group ID is passed as a parameter in the URL
-        const { GroupeName } = req.body.data;
+        const { GroupeName, capacity, teachers } = req.body.data;
 
         if (!groupId) {
             return res.send({
@@ -79,11 +87,23 @@ const updateGroupe = async (req, res, next) => {
         }
 
         await db.groupe.update({
-            GroupeName: GroupeName
+            GroupeName: GroupeName,
+            capacity: capacity
         }, {
             where: { ID_ROWID: groupId }
         });
-
+        // delete all teachers assossiated to this group then add the new ones
+        await db.teacherGroup.destroy({
+            where: { GroupeID: groupId }
+        });
+        if (teachers.length != 0) {
+            teachers.map(async (teacher) => {
+                await db.teacherGroup.create({
+                    GroupeID: groupId,
+                    TeacherID: teacher.ID_ROWID
+                });
+            });
+        }
         return res.send({
             message: "Group updated successfully!",
             code: 200
@@ -97,9 +117,58 @@ const updateGroupe = async (req, res, next) => {
         });
     }
 };
+// Programme Regestraions part
+const listProgrammeGroups = async (req, res, next) => {
+    try {
+        const progId = req.body.progId;
+        const groups = await db.groupe.findAll({
+            where: {
+                progID: progId
+            },
+            include: [
+                {
+                    model: db.teacher,
+                    as: 'teachers',
+                    include: [{
+                        model: db.person,
+                        as: 'personProfile2',
+                        attributes: ['firstName', 'lastName']
+                    }
+                    ]
+                },
+                {
+                    model: db.student,
+                    as: 'students',
+                    attributes: ['ID_ROWID']
+                }
+
+            ]
+        });
+        if (!groups) {
+            return res.send({
+                message: "No groups found.",
+                code: 404
+            });
+        }
+
+        return res.send({
+            message: "Groups fetched successfully.",
+            groups: groups,
+            code: 200
+        });
+
+    } catch (error) {
+        return res.send({
+            message: "An error occurred while fetching the registrations.",
+            error: error.message,
+            code: 400
+        });
+    }
+};
 // Exporting the functions
 module.exports = {
     addGroupe,
     removeGroupe,
-    updateGroupe
+    updateGroupe,
+    listProgrammeGroups
 };

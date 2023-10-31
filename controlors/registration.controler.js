@@ -117,7 +117,7 @@ const listRegistrations = async (req, res, next) => {
                 }
             ]
         });
-console.log(registrations);
+        console.log(registrations);
         if (!registrations) {
             return res.send({
                 message: "No registrations found.",
@@ -139,63 +139,11 @@ console.log(registrations);
         });
     }
 };
-const getStudentsForProgram = async (req, res, next) => {
-    try {
-        const programId = req.params.id; // Assuming the program ID is passed as a parameter in the URL
-
-        if (!programId) {
-            return res.status(400).json({
-                message: "Error! Program ID is required.",
-                code: 400
-            });
-        }
-
-        // Fetch all registrations for the specified program
-        const registrations = await db.registration.findAll({
-            where: { progID: programId },
-            include: [{
-                model: db.student,
-                as: 'students',
-                include: [{
-                    model: db.person,
-                    as: 'personProfile2',
-                    attributes: ['firstName', 'lastName', 'mail', 'phoneNumber', 'dateOfBirth']
-                }]
-            }]
-        });
-
-        // Transform the result into a desired structure
-        const students = registrations.map(reg => {
-            const student = reg.students;
-            return {
-                id: student.ID_ROWID,
-                name: `${student.personProfile2.firstName} ${student.personProfile2.lastName}`,
-                phone: student.personProfile2.phoneNumber,
-                email: student.personProfile2.mail,
-                dateOfBirth: student.personProfile2.dateOfBirth
-            };
-        });
-
-        return res.status(200).json({
-            message: "Students fetched successfully.",
-            students: students,
-            code: 200
-        });
-
-    } catch (error) {
-        return res.status(500).json({
-            message: "An error occurred while fetching students for the program.",
-            error: error.message,
-            code: 500
-        });
-    }
-};
 
 // Remember to export the new function
 module.exports = {
     addRegistration,
     removeRegistration,
-    listRegistrations,
-    getStudentsForProgram // Newly added method
+    listRegistrations
 };
 // Exporting the functions so they can be used elsewhere

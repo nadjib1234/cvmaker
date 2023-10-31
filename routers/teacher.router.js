@@ -10,4 +10,7 @@ routeTeacher.put("/modify/:id", jsonParser, teacherControler.updateTeacher);
 routeTeacher.delete("/remove/:id", jsonParser, teacherControler.removeTeacher);
 routeTeacher.get("/list", jsonParser, teacherControler.listTeachers);
 routeTeacher.get("/find", jsonParser, teacherControler.ExploreSearch);
+//for adding and updating group
+routeTeacher.get("/listTeachersForGroup", jsonParser, teacherControler.listTeachersForGroup);
+
 module.exports = routeTeacher;

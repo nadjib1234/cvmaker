@@ -7,7 +7,7 @@ const fs = require('fs');
 const Fuse = require('fuse.js');
 require("dotenv").config();
 const { addPerson } = require("./person.controler");
-const { generateStudentCode,checkIfCodeExists } = require("./generator");
+const { generateStudentCode, checkIfCodeExists } = require("./generator");
 const addStudent = async (req, res, next) => {
     try {
         // get the data sent by the user request :
@@ -25,32 +25,33 @@ const addStudent = async (req, res, next) => {
         }
         if (result.code === 401) {
             return res.send({
-                message:"corrigez votre email", 
+                message: "corrigez votre email",
                 error: result.message,
                 code: result.code,
             });
         }
         let generatedCode = generateStudentCode(reqData.firstName, reqData.lastName, reqData.dateOfBirth, reqData.email);
-        
+
         // Check if the generated code exists, if yes, then keep generating a new one until it's unique
         while (await checkIfCodeExists(generatedCode)) {
             // Alter the generated code in some way to ensure uniqueness. This could be adding a random number, or using another mechanism.
             // For this example, I'm simply appending a random number to it. 
             // You might want to modify the generateStudentCode function or come up with a different mechanism for this.
-            generatedCode = generateStudentCode(reqData.firstName, reqData.lastName, reqData.dateOfBirth, reqData.email) + Math.floor(Math.random() * 1000);}
+            generatedCode = generateStudentCode(reqData.firstName, reqData.lastName, reqData.dateOfBirth, reqData.email) + Math.floor(Math.random() * 1000);
+        }
 
         // create the student 
-        const createdStudent =  await db.student.create({
+        const createdStudent = await db.student.create({
             studentCode: generatedCode,
             personId: result
         })
         return res.send({
             message: "This user has been added successfully to Your list of student",
-            studentId: createdStudent.ID_ROWID, 
+            studentId: createdStudent.ID_ROWID,
             code: 200,
         });
     } catch (error) {
-        
+
         res.send({
             message: "An error occurred",
             error: error.message,
@@ -117,10 +118,10 @@ const updateStudent = async (req, res, next) => {
             where: { ID_ROWID: studentRecord.personId }
         });
         await db.student.update({
-            isActive:data.status
-        },{
-            where: { ID_ROWID:sudentid}
-        
+            isActive: data.status
+        }, {
+            where: { ID_ROWID: sudentid }
+
         })
         return res.send({
             message: `Student '${data.firstName} ${data.lastName}' has been updated successfully.`,
