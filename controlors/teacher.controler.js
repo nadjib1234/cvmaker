@@ -7,7 +7,7 @@ const fs = require('fs');
 const Fuse = require('fuse.js');
 require("dotenv").config();
 const { addPerson } = require("./person.controler");
-const { generateStudentCode,checkIfCodeExistsT } = require("./generator");
+const { generateStudentCode, checkIfCodeExistsT } = require("./generator");
 
 const addTeacher = async (req, res, next) => {
     try {
@@ -29,7 +29,7 @@ const addTeacher = async (req, res, next) => {
         // student code is available for others to see 
         // primary key is not available 
         let generatedCode = generateStudentCode(reqData.firstName, reqData.lastName, reqData.dateOfBirth, reqData.email);
-        
+
         // Check if the generated code exists, if yes, then keep generating a new one until it's unique
         while (await checkIfCodeExistsT(generatedCode)) {
             // Alter the generated code in some way to ensure uniqueness. This could be adding a random number, or using another mechanism.
@@ -276,12 +276,47 @@ const ExploreSearch = async (req, res, next) => {
     }
 };
 
+// teachers list for create group
+const listTeachersForGroup = async (req, res, next) => {
+    try {
+        // Fetching all teachers from the database
+        const teachers = await db.teacher.findAll({
+            include: [
+                {
+                    model: db.person,
+                    as: 'personProfile2',  // Alias you set in associations
+                    attributes: ['firstName', 'lastName']
+                }
+            ],
+            attributes: ['ID_ROWID']
+        });
+
+        console.log(teachers);
+
+        // Return the list of teachers
+        return res.send({
+            message: "List of all teachers",
+            teachers: teachers,
+            code: 200
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.send({
+            message: "An error occurred while fetching the list of teachers.",
+            error: error.message,
+            code: 400
+        });
+    }
+};
+
 module.exports = {
     addTeacher,
     updateTeacher,
     removeTeacher,
     listTeachers,
-    ExploreSearch
+    ExploreSearch,
+    listTeachersForGroup,
 };
 
 

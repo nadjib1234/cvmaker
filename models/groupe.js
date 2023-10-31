@@ -10,8 +10,11 @@ module.exports = function (sequelize, DataTypes) {
         GroupeName: {
             type: DataTypes.STRING,
             allowNull: true
+        },
+        capacity: {
+            type: DataTypes.BIGINT,
+            allowNull: true
         }
-
     },);
     groupe.associate = models => {
         // a group can have many responsibale teachers
