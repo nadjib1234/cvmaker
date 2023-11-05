@@ -139,11 +139,66 @@ const listRegistrations = async (req, res, next) => {
         });
     }
 };
+// Programme Regestraions part
+// this wisso from the other side to fix your side errors ;)
+const listProgrammeRegistrations = async (req, res, next) => {
+    try {
+        const progId = req.body.progId;
+        const registrations = await db.registration.findAll({
+            where: {
+                progID: progId
+            },
+            include: [
+                {
+                    model: db.student,
+                    as: 'students',
+                    include: [{
+                        model: db.person,
+                        as: 'personProfile2',
+                        attributes: ['firstName', 'lastName', 'imagePath']
+                    },
+                    {
+                        model: db.groupe,
+                        where: {
+                            progID: progId
+                        },
+                        required: false  // Make it optional
 
-// Remember to export the new function
+                    },
+                    ]
+                },
+
+            ]
+        });
+        console.log("dddddd");
+        console.log(registrations);
+        if (!registrations) {
+            return res.send({
+                message: "No registrations found.",
+                code: 404
+            });
+        }
+
+        return res.send({
+            message: "Registrations fetched successfully.",
+            registrations: registrations,
+            code: 200
+        });
+
+    } catch (error) {
+        return res.send({
+            message: "An error occurred while fetching the registrations.",
+            error: error.message,
+            code: 400
+        });
+    }
+};
+
+// Exporting the functions so they can be used elsewhere
 module.exports = {
     addRegistration,
     removeRegistration,
-    listRegistrations
+    listRegistrations,
+    ///
+    listProgrammeRegistrations,
 };
-// Exporting the functions so they can be used elsewhere

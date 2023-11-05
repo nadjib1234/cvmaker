@@ -40,7 +40,7 @@ const addPayment = async (req, res, next) => {
 
         if (existingPayment) {
             return res.send({
-                message: "Error! The student has already made a payment for this program.",
+                message: "This student has already made a payment for this program.",
                 code: 409
             });
         }
@@ -166,26 +166,15 @@ const getStudentsForProgramPayments = async (req, res, next) => {
                 include: [{
                     model: db.person,
                     as: 'personProfile2',
-                    attributes: ['firstName', 'lastName', 'mail', 'phoneNumber', 'dateOfBirth']
+                    attributes: ['firstName', 'lastName', 'mail', 'phoneNumber', 'dateOfBirth','imagePath']
                 }]
             }]
         });
 
-        const students = payments.map(pay => {
-            const student = pay.students;
-            return {
-                id: student.ID_ROWID,
-                name: `${student.personProfile2.firstName} ${student.personProfile2.lastName}`,
-                phone: student.personProfile2.phoneNumber,
-                email: student.personProfile2.mail,
-                dateOfBirth: student.personProfile2.dateOfBirth,
-                montant: pay.montant
-            };
-        });
 
         return res.status(200).json({
             message: "Students with payments fetched successfully.",
-            students: students,
+            payments: payments,
             code: 200
         });
 
@@ -198,9 +187,60 @@ const getStudentsForProgramPayments = async (req, res, next) => {
     }
 };
 
+const getTotalPaymentsForProgram = async (req, res, next) => {
+    try {
+        const programId = req.params.id;
+
+        if (!programId) {
+            return res.status(400).json({
+                message: "Error! Program ID is required.",
+                code: 400
+            });
+        }
+
+        // Calculate the date 30 days ago from the current date
+        const currentDate = new Date();
+        const thirtyDaysAgo = new Date(currentDate);
+        thirtyDaysAgo.setDate(currentDate.getDate() - 30);
+
+        // Calculate total payments for the program
+        const totalPayments = await db.payment.sum('montant', {
+            where: {
+                progID: programId
+            }
+        });
+
+        // Calculate total payments made in the last 30 days
+        const paymentsLast30Days = await db.payment.sum('montant', {
+            where: {
+                progID: programId,
+                createdAt: {
+                    [op.gte]: thirtyDaysAgo, // Payments made on or after 30 days ago
+                    [op.lte]: currentDate // Payments made on or before the current date
+                }
+            }
+        });
+
+        return res.status(200).json({
+            message: "Total payments and payments in the last 30 days fetched successfully.",
+            totalPayments: totalPayments,
+            paymentsLast30Days: paymentsLast30Days,
+            code: 200
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "An error occurred while fetching payments information.",
+            error: error.message,
+            code: 500
+        });
+    }
+};
+
 module.exports = {
     addPayment,
     removePayment,
     listPayments,
-    getStudentsForProgramPayments
+    getStudentsForProgramPayments,
+    getTotalPaymentsForProgram // Add this new method
 };

@@ -14,6 +14,8 @@ routePayment.delete("/remove/:id", jsonParser, paymentController.removePayment);
 routePayment.get("/list", jsonParser, paymentController.listPayments);
 
 // Route for getting students for a specific program's payments
-routePayment.get("/studentforprogram/:id", jsonParser, paymentController.getStudentsForProgramPayments);
+routePayment.get("/studentforprogram/:id", jsonParser, paymentController.getStudentsForProgramPayments)
+routePayment.get("/stats/:id", jsonParser, paymentController.getTotalPaymentsForProgram);
+
 
 module.exports = routePayment;
