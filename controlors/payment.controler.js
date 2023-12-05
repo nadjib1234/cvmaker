@@ -1,5 +1,8 @@
 const db = require(".././models");
 const seq = require("sequelize");
+const path = require('path');
+const fs = require('fs');
+const Fuse = require('fuse.js');
 const op = seq.Op;
 require("dotenv").config();
 
@@ -166,11 +169,32 @@ const getStudentsForProgramPayments = async (req, res, next) => {
                 include: [{
                     model: db.person,
                     as: 'personProfile2',
-                    attributes: ['firstName', 'lastName', 'mail', 'phoneNumber', 'dateOfBirth','imagePath']
+                    attributes: ['firstName', 'lastName', 'mail', 'phoneNumber', 'dateOfBirth', 'imagePath']
                 }]
             }]
         });
 
+        if (!payments) {
+            return res.status(404).json({
+                message: "No payments found for the program.",
+                code: 404
+            });
+        }
+
+        // Modify the image paths in payments
+        for (const payment of payments) {
+            const student = payment.students; // Assuming there's only one student per payment
+            if (student.personProfile2.imagePath !== null && student.personProfile2.imagePath !== '') {
+                const photoPath = path.join("uploads/profileImage/", student.personProfile2.imagePath);
+                try {
+                    await fs.promises.access(photoPath, fs.constants.F_OK);
+                    student.personProfile2.imagePath = await fs.promises.readFile(photoPath);
+                } catch (error) {
+                    console.error(error);
+                    student.personProfile2.imagePath = null;
+                }
+            }
+        }
 
         return res.status(200).json({
             message: "Students with payments fetched successfully.",
@@ -186,6 +210,7 @@ const getStudentsForProgramPayments = async (req, res, next) => {
         });
     }
 };
+
 
 const getTotalPaymentsForProgram = async (req, res, next) => {
     try {

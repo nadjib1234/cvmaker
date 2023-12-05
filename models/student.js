@@ -38,18 +38,24 @@ module.exports = function (sequelize, DataTypes) {
             through: models.registration,
             foreignKey: 'StudentID', // Using the correct primary key name for student
             otherKey: 'progID',    // Using the correct primary key name for program
-            as: 'programs'
+            as: 'programs',
+            onDelete: 'CASCADE'// This is the key part for cascading delete
+
         });
         // A student can be in many Groups 
         student.belongsToMany(models.groupe, {
             through: models.studentGroup,
             foreignKey: 'StudentID', // Using the correct primary key name for student
+            onDelete: 'CASCADE', // This is the key part for cascading delete
+
         });
         student.belongsToMany(models.program, {
             through: models.payment,
             foreignKey: 'StudentID',
             otherKey: 'progID',
-            as: 'payments'
+            as: 'payments',
+            onDelete: 'CASCADE', // This is the key part for cascading delete
+
         });
         
     }

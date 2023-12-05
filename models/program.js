@@ -76,7 +76,8 @@ module.exports = function (sequelize, DataTypes) {
             through: models.payment,
             foreignKey: 'progID',
             otherKey: 'StudentID',
-            as: 'payments'
+            as: 'payments',
+            onDelete: 'CASCADE', // This is the key part for cascading delete
         });
         
     }
