@@ -1,12 +1,12 @@
 // jest.config.js
 module.exports = {
+  preset: 'ts-jest',
   testEnvironment: 'node',
   testRunner: 'jest-circus/runner',
   runner: 'jest-circus/runner',
-  // setupFilesAfterEnv: ['<rootDir>/setupTests.js'], // Commented out since you don't have this file
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
-  testMatch: ['<rootDir>/path/to/your/tests/**/*.test.ts'], // Update with your actual test path and extension
+  testMatch: ['<rootDir>/entities/**/*.test.ts'], // Updated path
   moduleFileExtensions: ['js', 'mjs', 'ts', 'json', 'node'],
 };

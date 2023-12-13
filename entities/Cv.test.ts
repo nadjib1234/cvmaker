@@ -1,13 +1,13 @@
-// cv.test.js
+// cv.test.ts
 
 // Import the CV class
-import ("./Cv");
+import CV from "./Cv";
 
 // Test suite for the CV class
 describe('CV class', () => {
   // Test case for CV class instantiation
   describe('Instantiation', () => {
-    let cv;
+    let cv: CV;
 
     beforeEach(() => {
       cv = new CV(1, 'John Doe', ['JavaScript', 'React'], 'Computer Science', 'Software Developer');
