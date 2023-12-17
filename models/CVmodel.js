@@ -1,28 +1,28 @@
 // models/CVModel.js
-const { DataTypes } = require('sequelize');
+const Sequelize = require('sequelize');
 
-module.exports = (sequelize) => {
+module.exports = function (sequelize, DataTypes) {
   const CVModel = sequelize.define('CV', {
     id: {
+      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
-      autoIncrement: true,
     },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
     skills: {
-      type: DataTypes.STRING, // Adjust the data type according to your needs
+      type: DataTypes.JSON,
       allowNull: true,
     },
     education: {
-      type: DataTypes.STRING, // Adjust the data type according to your needs
+      type: DataTypes.STRING,
       allowNull: true,
     },
     experience: {
-      type: DataTypes.STRING, // Adjust the data type according to your needs
+      type: DataTypes.STRING,
       allowNull: true,
     },
   });

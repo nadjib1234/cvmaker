@@ -9,7 +9,7 @@
   "test": {
     "username": "root",
     "password": "root",
-    "database": "cvmaker",
+    "database": "cvmakertest",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
