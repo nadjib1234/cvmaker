@@ -1,38 +1,38 @@
-const request = require('supertest');
-const app = require('./index'); // Replace with the path to your main app file
-const db = require('./models');
+const request = require('supertest')
+const app = require('./index') // Replace with the path to your main app file
+const db = require('./models')
 
 describe('E2E Tests', () => {
-  let createdCvId;
+  let createdCvId
 
   it('should create a CV', async () => {
     const createResponse = await request(app)
-    .post('/createcv')
-    .send({
-      name: 'John Doe',
-      skills: 'JavaScript, Node.js',
-      education: 'Computer Science',
-      experience: 'Full Stack Developer'
-    });
+      .post('/createcv')
+      .send({
+        name: 'John Doe',
+        skills: 'JavaScript, Node.js',
+        education: 'Computer Science',
+        experience: 'Full Stack Developer'
+      })
 
-  expect(createResponse.status).toBe(201);
-  expect(createResponse.body).toHaveProperty('_id');
-  createdCvId = createResponse.body._id;
-  });
+    expect(createResponse.status).toBe(201)
+    expect(createResponse.body).toHaveProperty('_id')
+    createdCvId = createResponse.body._id
+  })
 
   it('should retrieve a CV', async () => {
     // Ensure the CV was created in the previous test
-    expect(createdCvId).toBeDefined();
+    expect(createdCvId).toBeDefined()
 
     const getResponse = await request(app)
       .get(`/getcv/${createdCvId}`)
-      .send();
+      .send()
 
-    expect(getResponse.status).toBe(200);
-    expect(getResponse.body).toHaveProperty('_id');
-    expect(getResponse.body._name).toBe('John Doe');
+    expect(getResponse.status).toBe(200)
+    expect(getResponse.body).toHaveProperty('_id')
+    expect(getResponse.body._name).toBe('John Doe')
     // Add more assertions based on your data
-  });
+  })
 
   // Cleanup logic after all tests
   afterAll(async () => {
@@ -40,7 +40,7 @@ describe('E2E Tests', () => {
     if (createdCvId) {
       await db.CV.destroy({
         where: { id: createdCvId }
-      });
+      })
     }
-  });
-});
+  })
+})
