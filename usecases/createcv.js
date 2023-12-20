@@ -1,4 +1,3 @@
-// usecases/getandcreatecv.js
 const CV = require('../entities/Cv');
 
 class CreateCV {
@@ -15,6 +14,7 @@ class CreateCV {
       throw new Error(`Error in createCV: ${error.message}`);
     }
   }
+ 
 }
 
 module.exports = CreateCV;
