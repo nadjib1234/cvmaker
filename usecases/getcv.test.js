@@ -1,7 +1,7 @@
-// usecases/getcv.test.js
+/* global describe, beforeEach, beforeAll,it, afterEach, afterAll,expect, jest */
+
 const GetCV = require('./getcv')
 const CV = require('../Entities/Cv')
-const { describe, beforeEach, it, expect } = require('@jest/globals');
 describe('Get CV', () => {
   let getCV
 

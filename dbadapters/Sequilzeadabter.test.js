@@ -1,4 +1,4 @@
-/* global describe, beforeEach, it, expect, jest */
+/* global describe, beforeEach, beforeAll,it, afterEach, afterAll,expect, jest */
 
 const SequelizeAdapter = require('./SequilizeAdapter')
 const db = require('./models')

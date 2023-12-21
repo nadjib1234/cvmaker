@@ -1,9 +1,8 @@
+/* global describe, beforeEach, beforeAll,it, afterEach, afterAll,expect, jest */
+
 const request = require('supertest')
 const app = require('./index') // Replace with the path to your main app file
 const db = require('./dbadapters/models')
-// Import necessary Jest functions
-const { describe, afterAll, it, expect } = require('@jest/globals');
-
 // Your test code...
 
 describe('E2E Tests', () => {

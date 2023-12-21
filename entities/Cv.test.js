@@ -1,8 +1,8 @@
 // cv.test.ts
+/* global describe, beforeEach, beforeAll,it, afterEach, afterAll,expect, jest */
 
 // Import the CV class using require
 const CV = require('./Cv')
-const { describe, beforeEach, it, expect } = require('@jest/globals');
 
 // Test suite for the CV class
 describe('CV class', () => {
