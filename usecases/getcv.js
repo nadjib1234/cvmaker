@@ -1,4 +1,4 @@
-const CV = require('../entities/Cv')
+const CV = require('../Entities/Cv')
 
 class GetCV {
   constructor (dbAdapter) {

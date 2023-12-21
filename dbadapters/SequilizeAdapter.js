@@ -1,7 +1,7 @@
 // sequelizeAdapter.js
-const db = require('../models')
+const db = require('./models')
 
-const DBAdapter = require('./getandcreatecvadabterI')
+const DBAdapter = require('./DBadapterInterface')
 class SequelizeAdapter extends DBAdapter {
   constructor () {
     super()

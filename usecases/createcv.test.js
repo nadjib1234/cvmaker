@@ -1,6 +1,6 @@
 // usecases/getandcreatecv.test.js
 const GetAndCreateCV = require('./createcv')
-const CV = require('../entities/Cv')
+const CV = require('../Entities/Cv')
 
 describe('Create CV', () => {
   let getAndCreateCV

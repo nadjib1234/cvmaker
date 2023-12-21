@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const db = require('./models')
+const db = require('./dbadapters/models')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 
@@ -8,18 +8,18 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json({ strict: false, limit: '15mb' }))
 app.use(cors())
 
-const sequelizeAdapter = require('./dbadapters/sequilzeadanter')
+const sequelizeAdapter = require('./dbadapters/SequilizeAdapter')
 
 app.use(function (req, res, next) {
   req.headers['content-type'] = 'application/json'
   next()
 })
 
-const CreateCVUseCase = require('./usecases/createcv')
-const GetCVUseCase = require('./usecases/getcv')
+const CreateCVUseCase = require('./Usecases/createcv')
+const GetCVUseCase = require('./Usecases/getcv')
 const CreateCVController = require('./controllers/createcv.controller')
 const GetCVController = require('./controllers/getcv.controller')
-const CVEntity = require('./entities/Cv')
+const CVEntity = require('./Entities/Cv')
 
 const createCVUseCase = new CreateCVUseCase(new sequelizeAdapter())
 

@@ -1,6 +1,6 @@
 const request = require('supertest')
 const app = require('./index') // Replace with the path to your main app file
-const db = require('./models')
+const db = require('./dbadapters/models')
 
 describe('E2E Tests', () => {
   let createdCvId

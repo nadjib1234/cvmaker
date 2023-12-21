@@ -1,6 +1,6 @@
 // usecases/getcv.test.js
 const GetCV = require('./getcv')
-const CV = require('../entities/Cv')
+const CV = require('../Entities/Cv')
 
 describe('Get CV', () => {
   let getCV

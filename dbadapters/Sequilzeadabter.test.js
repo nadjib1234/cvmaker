@@ -1,5 +1,5 @@
-const SequelizeAdapter = require('./sequilzeadanter')
-const db = require('../models')
+const SequelizeAdapter = require('./SequilizeAdapter')
+const db = require('./models')
 
 describe('Sequelize Adapter', () => {
   beforeAll(async () => {
