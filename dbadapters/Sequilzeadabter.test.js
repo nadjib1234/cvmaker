@@ -1,6 +1,7 @@
+/* global describe, beforeEach, it, expect, jest */
+
 const SequelizeAdapter = require('./SequilizeAdapter')
 const db = require('./models')
-const { describe, beforeEach, it, expect, afterEach,beforeAll } = require('@jest/globals');
 
 describe('Sequelize Adapter', () => {
   beforeAll(async () => {

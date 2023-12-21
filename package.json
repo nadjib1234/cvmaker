@@ -20,6 +20,7 @@
   "devDependencies": {
     "@jest/globals": "^29.7.0",
     "@types/jest": "^27.0.3",
+    "eslint-plugin-jest": "^27.6.0",
     "jest": "^27.5.1",
     "sequelize-test-helpers": "^1.0.0",
     "supertest": "^6.3.3",
