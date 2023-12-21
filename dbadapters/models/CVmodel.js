@@ -1,6 +1,4 @@
 // models/CVModel.js
-const Sequelize = require('sequelize')
-
 module.exports = function (sequelize, DataTypes) {
   const CVModel = sequelize.define('CV', {
     id: {

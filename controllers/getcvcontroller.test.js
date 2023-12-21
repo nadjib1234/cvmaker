@@ -1,4 +1,5 @@
 const GetCVController = require('./getcv.controller')
+const { describe, beforeEach, it, expect} = require('@jest/globals');
 
 describe('Get CV Controller', () => {
   let getCVController

@@ -15,26 +15,26 @@ app.use(function (req, res, next) {
   next()
 })
 
-const CreateCVUseCase = require('./Usecases/createcv')
-const GetCVUseCase = require('./Usecases/getcv')
-const CreateCVController = require('./controllers/createcv.controller')
-const GetCVController = require('./controllers/getcv.controller')
+const CreateCVUseCaseO= require('./Usecases/createcv')
+const GetCVUseCaseO = require('./Usecases/getcv')
+const CreateCVControllerO = require('./controllers/createcv.controller')
+const GetCVControllerO = require('./controllers/getcv.controller')
 const CVEntity = require('./Entities/Cv')
 
-const createCVUseCase = new CreateCVUseCase(new sequelizeAdapter())
+const CreateCVUseCase = new CreateCVUseCaseO(new sequelizeAdapter());
 
-const getCVUseCase = new GetCVUseCase(new sequelizeAdapter())
+const GetCVUseCase = new GetCVUseCaseO(new sequelizeAdapter());
 
-const createCVController = new CreateCVController(createCVUseCase, CVEntity)
-const getCVController = new GetCVController(getCVUseCase, CVEntity)
+const CreateCVController = new CreateCVControllerO(CreateCVUseCase, CVEntity)
+const GetCVController = new GetCVControllerO(GetCVUseCase, CVEntity)
 
 const createCVRouteMiddleware = async (req, res) => {
-  await createCVController.createCV(req, res)
+  await CreateCVController.createCV(req, res)
 }
 
 app.post('/createcv', bodyParser.json(), createCVRouteMiddleware)
 const getCVRouteMiddleware = async (req, res) => {
-  await getCVController.getCV(req, res)
+  await GetCVController.getCV(req, res)
 }
 
 app.get('/getcv/:id', bodyParser.json(), getCVRouteMiddleware)
