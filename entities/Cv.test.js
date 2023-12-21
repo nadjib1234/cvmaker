@@ -8,13 +8,7 @@ describe('CV class', () => {
   let cv
 
   beforeEach(() => {
-    cv = new CV(
-      1,
-      'John Doe',
-      ['JavaScript', 'React'],
-      'Computer Science',
-      'Software Developer'
-    )
+    cv = new CV(1, 'John Doe', ['JavaScript', 'React'], 'Computer Science', 'Software Developer')
   })
 
   it('should create a CV instance with correct initial properties', () => {

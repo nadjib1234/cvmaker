@@ -12,12 +12,12 @@ describe('Get CV Controller', () => {
       name,
       skills,
       education,
-      experience,
+      experience
     }))
 
     // Stub implementation for the BL
     geCVStub = {
-      getCV: jest.fn(),
+      getCV: jest.fn()
     }
 
     getCVController = new GetCVController(geCVStub, CVEntityMock)
@@ -30,14 +30,14 @@ describe('Get CV Controller', () => {
       name: 'John Doe',
       skills: ['JavaScript', 'React'],
       education: 'Computer Science',
-      experience: 'Software Developer',
+      experience: 'Software Developer'
     }
     geCVStub.getCV.mockResolvedValue(cvData)
 
     const req = { params: { id: 1 } }
     const res = {
       status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
+      json: jest.fn()
     }
 
     await getCVController.getCV(req, res)
@@ -48,7 +48,7 @@ describe('Get CV Controller', () => {
       name: 'John Doe',
       skills: ['JavaScript', 'React'],
       education: 'Computer Science',
-      experience: 'Software Developer',
+      experience: 'Software Developer'
     })
 
     // Verify that the CV entity constructor was called with the correct parameters
@@ -72,7 +72,7 @@ describe('Get CV Controller', () => {
     const req = { params: { id: 2 } }
     const res = {
       status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
+      json: jest.fn()
     }
 
     await getCVController.getCV(req, res)

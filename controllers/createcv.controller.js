@@ -1,19 +1,14 @@
 class CreateCVController {
-  constructor(createCVUseCase, CVEntity) {
+  constructor (createCVUseCase, CVEntity) {
     this.createCVUseCase = createCVUseCase
     this.CVEntity = CVEntity
   }
 
-  async createCV(req, res) {
+  async createCV (req, res) {
     const { name, skills, education, experience } = req.body
 
     try {
-      const cvData = await this.createCVUseCase.createCV(
-        name,
-        skills,
-        education,
-        experience
-      )
+      const cvData = await this.createCVUseCase.createCV(name, skills, education, experience)
       const cv = new this.CVEntity(
         cvData.id,
         cvData.name,

@@ -7,24 +7,24 @@ module.exports = function (sequelize, DataTypes) {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true,
+      primaryKey: true
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
     skills: {
       type: DataTypes.JSON,
-      allowNull: true,
+      allowNull: true
     },
     education: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: true
     },
     experience: {
       type: DataTypes.STRING,
-      allowNull: true,
-    },
+      allowNull: true
+    }
   })
 
   return CVModel

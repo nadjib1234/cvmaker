@@ -2,7 +2,7 @@
 /**
  * @interface
  */
-function DBAdapter() {}
+function DBAdapter () {}
 
 DBAdapter.prototype.getCVById = function (id) {
   throw new Error('Method not implemented')

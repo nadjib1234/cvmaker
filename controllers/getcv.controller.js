@@ -1,10 +1,10 @@
 class GetCVController {
-  constructor(getCV, CVEntity) {
+  constructor (getCV, CVEntity) {
     this.getCVbl = getCV
     this.CVEntity = CVEntity
   }
 
-  async getCV(req, res) {
+  async getCV (req, res) {
     const cvId = req.params.id
 
     try {

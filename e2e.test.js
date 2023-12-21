@@ -6,12 +6,14 @@ describe('E2E Tests', () => {
   let createdCvId
 
   it('should create a CV', async () => {
-    const createResponse = await request(app).post('/createcv').send({
-      name: 'John Doe',
-      skills: 'JavaScript, Node.js',
-      education: 'Computer Science',
-      experience: 'Full Stack Developer',
-    })
+    const createResponse = await request(app)
+      .post('/createcv')
+      .send({
+        name: 'John Doe',
+        skills: 'JavaScript, Node.js',
+        education: 'Computer Science',
+        experience: 'Full Stack Developer'
+      })
 
     expect(createResponse.status).toBe(201)
     expect(createResponse.body).toHaveProperty('_id')
@@ -22,7 +24,9 @@ describe('E2E Tests', () => {
     // Ensure the CV was created in the previous test
     expect(createdCvId).toBeDefined()
 
-    const getResponse = await request(app).get(`/getcv/${createdCvId}`).send()
+    const getResponse = await request(app)
+      .get(`/getcv/${createdCvId}`)
+      .send()
 
     expect(getResponse.status).toBe(200)
     expect(getResponse.body).toHaveProperty('_id')
@@ -35,7 +39,7 @@ describe('E2E Tests', () => {
     // Clean up created CV using Sequelize destroy method
     if (createdCvId) {
       await db.CV.destroy({
-        where: { id: createdCvId },
+        where: { id: createdCvId }
       })
     }
   })
