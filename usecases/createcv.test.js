@@ -13,15 +13,15 @@ describe('Create CV', () => {
         name: cvData.name,
         skills: cvData.skills,
         education: cvData.education,
-        experience: cvData.experience
-      })
+        experience: cvData.experience,
+      }),
     }
 
     // Stub implementation for postCV with an error
     const errorPostCVStub = {
       postCV: async (cvData) => {
         throw new Error('Simulated error inserting CV data')
-      }
+      },
     }
 
     // Create instances of GetAndCreateCV with different stubs for testing
@@ -34,7 +34,7 @@ describe('Create CV', () => {
       name: 'Jane Doe',
       skills: ['Java', 'Spring'],
       education: 'Information Technology',
-      experience: 'Full Stack Developer'
+      experience: 'Full Stack Developer',
     }
 
     // Test the success case
@@ -58,15 +58,17 @@ describe('Create CV', () => {
       name: 'Jane Doe',
       skills: ['Java', 'Spring'],
       education: 'Information Technology',
-      experience: 'Full Stack Developer'
+      experience: 'Full Stack Developer',
     }
 
     // Test the error case
-    await expect(errorCreateCV.createCV(
-      cvData.name,
-      cvData.skills,
-      cvData.education,
-      cvData.experience
-    )).rejects.toThrow('Simulated error inserting CV data')
+    await expect(
+      errorCreateCV.createCV(
+        cvData.name,
+        cvData.skills,
+        cvData.education,
+        cvData.experience
+      )
+    ).rejects.toThrow('Simulated error inserting CV data')
   })
 })

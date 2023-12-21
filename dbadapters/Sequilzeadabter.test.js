@@ -16,7 +16,7 @@ describe('Sequelize Adapter', () => {
     await db.CV.destroy({
       where: {},
       truncate: true, // Reset auto-increment counter
-      cascade: true // Delete associated records (if any)
+      cascade: true, // Delete associated records (if any)
     })
   })
 
@@ -26,7 +26,7 @@ describe('Sequelize Adapter', () => {
       name: 'John Doe',
       skills: ['JavaScript', 'React'],
       education: 'Computer Science',
-      experience: 'Software Developer'
+      experience: 'Software Developer',
     })
 
     const cv = await dbAdapter.getCVById(insertedCV.id)
@@ -42,7 +42,7 @@ describe('Sequelize Adapter', () => {
       name: 'Jane Doe',
       skills: ['Java', 'Spring'],
       education: 'Information Technology',
-      experience: 'Full Stack Developer'
+      experience: 'Full Stack Developer',
     }
 
     const result = await dbAdapter.postCV(cvData)
@@ -56,7 +56,9 @@ describe('Sequelize Adapter', () => {
     const invalidId = -1000
 
     // Assertions
-    await expect(dbAdapter.getCVById(invalidId)).rejects.toThrowError('CV not found')
+    await expect(dbAdapter.getCVById(invalidId)).rejects.toThrowError(
+      'CV not found'
+    )
   })
 
   it('should handle error when fetching CV by ID', async () => {
@@ -73,7 +75,7 @@ describe('Sequelize Adapter', () => {
     const invalidCVData = {
       skills: ['Java', 'Spring'],
       education: 'Information Technology',
-      experience: 'Full Stack Developer'
+      experience: 'Full Stack Developer',
     }
 
     // Assertions

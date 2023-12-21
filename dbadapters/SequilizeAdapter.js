@@ -3,12 +3,12 @@ const db = require('./models')
 
 const DBAdapter = require('./DBadapterInterface')
 class SequelizeAdapter extends DBAdapter {
-  constructor () {
+  constructor() {
     super()
     this.CVModel = db.CV
   }
 
-  async getCVById (id) {
+  async getCVById(id) {
     try {
       const cv = await this.CVModel.findByPk(id, { raw: true })
       if (!cv) {
@@ -20,7 +20,7 @@ class SequelizeAdapter extends DBAdapter {
     }
   }
 
-  async postCV (cvData) {
+  async postCV(cvData) {
     try {
       const createdCV = await this.CVModel.create(cvData)
       return { ...createdCV.get({ plain: true }) }

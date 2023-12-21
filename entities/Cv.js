@@ -1,7 +1,7 @@
 // entities/CV.js
 
 class CV {
-  constructor (id, name, skills, education, experience) {
+  constructor(id, name, skills, education, experience) {
     this._id = id
     this._name = name
     this._skills = skills
@@ -9,43 +9,43 @@ class CV {
     this._experience = experience
   }
 
-  get id () {
+  get id() {
     return this._id
   }
 
-  set id (id) {
+  set id(id) {
     this._id = id
   }
 
-  get name () {
+  get name() {
     return this._name
   }
 
-  set name (name) {
+  set name(name) {
     this._name = name
   }
 
-  get skills () {
+  get skills() {
     return this._skills
   }
 
-  set skills (skills) {
+  set skills(skills) {
     this._skills = skills
   }
 
-  get education () {
+  get education() {
     return this._education
   }
 
-  set education (education) {
+  set education(education) {
     this._education = education
   }
 
-  get experience () {
+  get experience() {
     return this._experience
   }
 
-  set experience (experience) {
+  set experience(experience) {
     this._experience = experience
   }
 }

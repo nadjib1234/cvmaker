@@ -13,15 +13,15 @@ describe('Get CV', () => {
         name: 'John Doe',
         skills: ['JavaScript', 'React'],
         education: 'Computer Science',
-        experience: 'Software Developer'
-      })
+        experience: 'Software Developer',
+      }),
     }
 
     // Stub implementation for getCVById with an error
     const errorGetCVByIdStub = {
       getCVById: async () => {
         throw new Error('Simulated error fetching CV data')
-      }
+      },
     }
 
     // Create instances of GetCV with different stubs for testing

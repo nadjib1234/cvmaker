@@ -7,6 +7,12 @@
     "start": "node index.js",
     "test": "jest"
   },
+   "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "printWidth": 80
+  },
   "keywords": [],
   "author": "Your Name",
   "license": "MIT",
