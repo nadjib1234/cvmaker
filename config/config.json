@@ -3,21 +3,21 @@
     "username": "root",
     "password": "root",
     "database": "cvmaker",
-    "host": "127.0.0.1",
+    "host": "mysql",
     "dialect": "mysql"
   },
   "test": {
     "username": "root",
     "password": "root",
     "database": "cvmakertest",
-    "host": "127.0.0.1",
+    "host": "mysql",
     "dialect": "mysql"
   },
   "production": {
     "username": "root",
     "password": "root",
     "database": "cvmaker",
-    "host": "127.0.0.1",
+    "host": "mysql",
     "dialect": "mysql"
   }
 }

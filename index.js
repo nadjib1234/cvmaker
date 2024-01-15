@@ -17,8 +17,8 @@ app.use(function (req, res, next) {
 
 const CreateCVUseCaseO= require('./Usecases/createcv')
 const GetCVUseCaseO = require('./Usecases/getcv')
-const CreateCVControllerO = require('./controllers/createcv.controller')
-const GetCVControllerO = require('./controllers/getcv.controller')
+const CreateCVControllerO = require('./Controllers/createcv.controller')
+const GetCVControllerO = require('./Controllers/getcv.controller')
 const CVEntity = require('./Entities/Cv')
 
 const CreateCVUseCase = new CreateCVUseCaseO(new sequelizeAdapter());

@@ -14,6 +14,7 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "jscpd": "^3.5.10",
     "mysql2": "^3.6.5",
     "sequelize": "^6.35.2"
   },
@@ -22,6 +23,10 @@
     "@types/jest": "^27.0.3",
     "eslint-plugin-jest": "^27.6.0",
     "jest": "^27.5.1",
+    "markdown-link-check": "^3.11.2",
+    "markdownlint": "^0.32.1",
+    "npm-package-json-lint": "^7.1.0",
+    "secretlint": "^8.0.0",
     "sequelize-test-helpers": "^1.0.0",
     "supertest": "^6.3.3",
     "ts-jest": "^27.1.5",
