@@ -3,15 +3,15 @@ version: '3'
 services:
   cvmaker:
     image: cvmaker  # Replace with the actual image name for your Node.js app
-    container_name: cvmaker
+    # container_name: cvmaker
     ports:
-      - "8323:3000"  # Adjust the port if needed
-    command: ["sh", "-c", "sleep 80 && node index"] 
+      - "3000:3000"  # Adjust the port if needed
+    command: ["sh", "-c", "sleep 10 && node index"] 
     depends_on:
       - mysql
   mysql:
     image: mysql:latest
-    container_name: cvmaker-mysql
+    # container_name: cvmaker-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: cvmaker
