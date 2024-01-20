@@ -10,8 +10,9 @@ COPY package*.json ./
 # Install app dependencies
 RUN npm install
 
-# Copy all the application code to the working directory
+# Copy all files in the current directory to the working directory
 COPY . .
+
 EXPOSE 8323
 # Run your application
 CMD ["node", "index.js"]

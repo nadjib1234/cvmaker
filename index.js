@@ -52,7 +52,7 @@ const getCVRouteMiddleware = async (req, res) => {
 app.get('/getcv/:id', bodyParser.json(), getCVRouteMiddleware);
 
 db.sequelize.sync().then(() => {
-  const PORT = process.env.PORT || 8323;
+  const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}.`);
   });
