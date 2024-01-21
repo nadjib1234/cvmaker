@@ -3,18 +3,26 @@ version: '3'
 services:
   cvmaker:
     image: cvmaker  # Replace with the actual image name for your Node.js app
-    # container_name: cvmaker
+    container_name: cvmaker
     ports:
       - "3000:3000"  # Adjust the port if needed
-    command: ["sh", "-c", "sleep 10 && node index"] 
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
   mysql:
     image: mysql:latest
-    # container_name: cvmaker-mysql
+    container_name: cvmaker-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: cvmaker
     ports:
-      - "3303:3306" 
-    
+      - "3303:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql  # Mount a volume for MySQL data
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "mysql", "-u", "root", "-p$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+volumes:
+  mysql-data:
